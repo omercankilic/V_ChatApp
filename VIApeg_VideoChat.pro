@@ -19,7 +19,8 @@ SOURCES += \
     Tcp_Socket/TCP_SOCKET.cpp \
     camera_capture.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    openwindow.cpp
 
 HEADERS += \
     ActiveClients/Active_Clients.h \
@@ -30,10 +31,12 @@ HEADERS += \
     Udp_Socket/UDP_SOCKET.h \
     camera_capture.h \
     conversion_functions.h \
-    mainwindow.h
+    mainwindow.h \
+    openwindow.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    openwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

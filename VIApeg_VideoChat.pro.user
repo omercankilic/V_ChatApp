@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.11.0, 2020-12-30T17:33:21. -->
+<!-- Written by QtCreator 4.11.0, 2020-12-31T18:03:41. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -282,8 +282,9 @@
     </valuelist>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/mrcan/QtApps/VIApeg_VideoChat/VIApeg_VideoChat.pro</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/mrcan/QtApps/VIApeg_VideoChat/VIApeg_VideoChat.pro</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">VIApeg_VideoChat2</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/mrcan/Desktop/V_ChatApp/VIApeg_VideoChat.pro</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/mrcan/Desktop/V_ChatApp/VIApeg_VideoChat.pro</value>
     <value type="QString" key="RunConfiguration.Arguments"></value>
     <value type="bool" key="RunConfiguration.Arguments.multi">false</value>
     <value type="QString" key="RunConfiguration.OverrideDebuggerStartup"></value>
@@ -294,7 +295,7 @@
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory"></value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default"></value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/mrcan/QtApps/build-VIApeg_VideoChat-Desktop-Debug</value>
    </valuemap>
    <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
   </valuemap>

@@ -48,11 +48,14 @@ namespace Chat {
         class Tcp_Socket{
                      
                 public:
-                        Tcp_Socket(char *ip_addr){
+                        Tcp_Socket(std::string ip_addr){
                                 ip_assigned = new char[16];
-                                ip_assigned = ip_addr;
+                                strcpy(ip_assigned,ip_addr.c_str());
                                 
-                                input_msg = new MessagePacket();
+                                //input_msg = new MessagePacket();
+                        }
+                        Tcp_Socket(){
+                               // input_msg = new MessagePacket();
                         }
                         int create_socket(){
                              
@@ -150,7 +153,7 @@ namespace Chat {
                                 }
                                 int res;
                                 active_client temp_client;
-                                char tempdata[3000];
+                                char tempdata[3007];
                                 while(true){
                                         int temp_client_sockfd;
                                         struct sockaddr_in temp_client_addr;
@@ -160,7 +163,7 @@ namespace Chat {
                                                 std::cout<<"Problem with client connecting"<<std::endl;
                                         }
                                         
-                                        if(recv(temp_client_sockfd,tempdata,3000,0) != -1){
+                                        if(recv(temp_client_sockfd,tempdata,3007,0) != -1){
                                                 MessagePacket *temp_message_packet = reinterpret_cast<MessagePacket*>(tempdata);
                                                 res = temp_message_packet->connection_manipulation();
                                                 if(res == CONNECTION_START){
@@ -203,12 +206,12 @@ namespace Chat {
                                                         
                                                         //close my current communication with temp_client_sock
                                                 }else if(res == CONNECTION_MESSAGE){
-                                                        if(temp_client_sockfd == act_clients->active_client_sockfd){
+                                                       // if(temp_client_sockfd == act_clients->active_client_sockfd){
                                                                 std::cout<<" Message -> "<<temp_message_packet->packet_raw_data<<std::endl;
-                                                        }else{
+                                                        //}else{
                                                                 delete temp_message_packet;
                                                                 close(temp_client_sockfd);
-                                                        }
+                                                        //}
                                                 }else{
                                                         
                                                         //send I am busy message to client and close sockfd
@@ -231,7 +234,7 @@ namespace Chat {
                         uint16_t port_number = 52000;
                         char *ip_assigned = nullptr; 
                         struct sockaddr_in server_addr,  active_client_addr;
-                        MessagePacket *input_msg;           
+                        //MessagePacket *input_msg;           
                         Active_Clients *act_clients;
                         std::string user_name;
                                         

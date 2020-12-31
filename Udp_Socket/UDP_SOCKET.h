@@ -17,8 +17,11 @@ namespace Chat{
         class Udp_Socket{
            
                 public:
-                        Udp_Socket(char *ip_addr){
-                                ip_assigned  = ip_addr;
+                        Udp_Socket(std::string ip_addr){
+                                ip_assigned = new char[16];
+                                strcpy(ip_assigned,ip_addr.c_str());
+                        }
+                        Udp_Socket(){
                                 
                         }
                         int socket_create(){
@@ -32,11 +35,12 @@ namespace Chat{
                                 
                                 bind(udp_sockfd,(struct sockaddr*)&servaddr,sizeof(servaddr));
                                 
+                                return 1;
                         }
                         
                         int send_broadcast_message(int msg_type){
                                 
-                                
+                                return 0;
                         }
                         
                         int udp_conn_operation(int conn_tp,struct sockaddr_in client,char *host_name){
@@ -55,30 +59,34 @@ namespace Chat{
                                         act_clients->delete_host(host_name);
                                         
                                 }
+                                return 1;
                         }
                         
                         int start_listen(){
+                                socklen_t clie_size = sizeof(cliaddr);
                                 while(false == close_flag){
                                         char *buff = new char[3007];
-                                        int nb_bytes = recvfrom(udp_sockfd,buff,3007,0,(struct sockaddr *)&cliaddr,(socklen_t)sizeof(cliaddr));           
+                                        int nb_bytes = recvfrom(udp_sockfd,buff,3007,0,(struct sockaddr *)&cliaddr,&clie_size);           
                                         if(nb_bytes == -1){
                                                 std::cout<<"UDP_SOCKET RECVFROM ERROR"<<std::endl;
                                                 delete []buff;
                                                 continue;
                                         }
                                         MessagePacket *temp_msg = reinterpret_cast<MessagePacket*>(buff);
-                                       int conn_type = temp_msg->udp_connection_manipulation(temp_msg->packet_raw_data);
+                                       int conn_type = temp_msg->connection_manipulation();
                                        udp_conn_operation(conn_type,cliaddr,temp_msg->packet_raw_data);
                                        delete temp_msg;
                                        delete buff;
                                        
                                 }
+                                return 1;
+                                
                         }                        
                         
                 private:
                         
                         struct sockaddr_in servaddr, cliaddr; 
-                        int udp_sockfd,udp_sockfd;
+                        int udp_sockfd;
                         const int udp_listen_port = 23000;
                         char *ip_assigned = nullptr;
                         int broadcast = 1;

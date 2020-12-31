@@ -115,7 +115,7 @@ border-radius:5px;
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="removeClientButton_2">
+             <widget class="QPushButton" name="activateClientButton">
               <property name="minimumSize">
                <size>
                 <width>70</width>
@@ -134,7 +134,7 @@ border-radius:5px;
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="removeClientButton_3">
+             <widget class="QPushButton" name="videoButton">
               <property name="minimumSize">
                <size>
                 <width>70</width>
@@ -191,7 +191,7 @@ border-radius:5px;
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QPushButton" name="removeClientButton_4">
+           <widget class="QPushButton" name="sendMsgButton">
             <property name="minimumSize">
              <size>
               <width>70</width>
@@ -210,7 +210,7 @@ border-radius:5px;
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="removeClientButton_5">
+           <widget class="QPushButton" name="fileButton">
             <property name="minimumSize">
              <size>
               <width>70</width>
