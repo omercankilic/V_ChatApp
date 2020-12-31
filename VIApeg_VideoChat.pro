@@ -48,4 +48,4 @@ INCLUDEPATH  += /usr/include/opencv4
 
 LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_objdetect -lopencv_imgcodecs -lopencv_videoio
 
-LIBS +=-L/usr/local/lib -lavdevice -lm -lxcb -lxcb-shm -lxcb -lxcb-shape -lxcb -lxcb-xfixes -lxcb-render -lxcb-shape -lxcb -lasound -lavfilter -pthread -lm -lva -ldl -lswscale -lm -lavformat -lz -lavcodec -pthread -lm -llzma -lz -lva -ldl -lswresample -lm -lavutil -pthread -lva -lva-drm -lva -lva-x11 -lX11 -lm -lva -ldl
+LIBS +=-L/usr/local/lib -lavdevice -lm -lxcb -lxcb-shm -lxcb -lxcb-shape -lxcb  -lxcb-render  -lxcb  -lavfilter -pthread -lm  -ldl -lswscale -lm -lavformat -lz -lavcodec -pthread -lm -llzma -lz  -ldl -lswresample -lm -lavutil -pthread  -lX11 -lm -ldl

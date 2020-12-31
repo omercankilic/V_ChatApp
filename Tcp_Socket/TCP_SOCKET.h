@@ -130,10 +130,11 @@ namespace Chat {
                       
                        
                         int is_accepted_f(char *host_name,struct sockaddr_in &client){
-                                char client_ip[16];
+                               char client_ip[16];
                                char answer;
                                 
                                 inet_ntop(AF_INET, &client.sin_addr, client_ip,16 );
+                                
                                 std::cout<<host_name<<"("<<client_ip<<")"<<" requested a connection ? (Y / N)"<<std::endl;
                                 std::cin>>answer; 
                         
@@ -154,10 +155,13 @@ namespace Chat {
                                 int res;
                                 active_client temp_client;
                                 char tempdata[3007];
+                                
                                 while(true){
+                                        
                                         int temp_client_sockfd;
                                         struct sockaddr_in temp_client_addr;
                                         socklen_t temp_client_len= sizeof(temp_client_addr);
+                                      
                                         temp_client_sockfd = accept(server_sockfd,(sockaddr *)&temp_client_addr,&(temp_client_len));
                                         if(temp_client_sockfd ==-1){
                                                 std::cout<<"Problem with client connecting"<<std::endl;
@@ -209,7 +213,7 @@ namespace Chat {
                                                        // if(temp_client_sockfd == act_clients->active_client_sockfd){
                                                                 std::cout<<" Message -> "<<temp_message_packet->packet_raw_data<<std::endl;
                                                         //}else{
-                                                                delete temp_message_packet;
+                                                                temp_message_packet = nullptr;
                                                                 close(temp_client_sockfd);
                                                         //}
                                                 }else{

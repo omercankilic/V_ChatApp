@@ -21,7 +21,7 @@ namespace Chat {
                         uint8_t                      packet_type;              // 1byte
                         uint16_t                   packet_raw_data_size;//2 byte
                         uint32_t                   packet_timestamp; // 4 bytes
-                        char*                         packet_raw_data =   new char[3000]  ; // 3000 bytes for string message
+                        char                        packet_raw_data[3000]  ; // 3000 bytes for string message
                         //MessagePacket constructor//
                         MessagePacket(const uint8_t type,
                                                       const uint16_t raw_data_size,
@@ -36,8 +36,7 @@ namespace Chat {
                         MessagePacket(){}
                         
                         ~MessagePacket(){
-                                delete []packet_raw_data;
-                                packet_raw_data = NULL;
+                                
                         }
                         
                         int connection_manipulation(){
@@ -54,6 +53,8 @@ namespace Chat {
                                 }else if(packet_type ==CONNECTION_OFFLINE){
                                         //we will remove the client from the active clients list
                                         return CONNECTION_OFFLINE;
+                                }else if(packet_type == CONNECTION_MESSAGE){
+                                        return CONNECTION_MESSAGE;
                                 }
                                 
                                 return UNDEFINED;
