@@ -5,6 +5,7 @@
 #include <Tcp_Socket/TCP_SOCKET.h>
 #include <Udp_Socket/UDP_SOCKET.h>
 #include <ActiveClients/Active_Clients.h>
+
 #include <thread>
 #include <condition_variable>
 
@@ -20,6 +21,7 @@ class MainWindow : public QMainWindow
         public:
                 MainWindow(QWidget *parent = nullptr,std::string ip_n="192.168.1.6",std::string user_n="omercan");
                 ~MainWindow();
+                Active_Clients *mw_act_clients;
                 Tcp_Socket *mw_tcp_socket;
                 Udp_Socket *mw_udp_socket;
                 std::string ip_addres;
@@ -29,9 +31,6 @@ class MainWindow : public QMainWindow
                 
         private:
                  Ui::MainWindow *ui;
-                 std::thread *tcp_listen_th;
-                 std::thread *udp_listen_th;
-                 
                  
                  
 };

@@ -17,9 +17,13 @@ namespace Chat{
         class Udp_Socket{
            
                 public:
-                        Udp_Socket(std::string ip_addr){
+                        Udp_Socket(std::string ip_addr,Active_Clients *act_c){
+                                act_clients = act_c;
                                 ip_assigned = new char[16];
                                 strcpy(ip_assigned,ip_addr.c_str());
+                                //udp_listen_th = new thread([this](){
+                                //        start_listen();'
+                                //});
                         }
                         Udp_Socket(){
                                 
@@ -38,10 +42,6 @@ namespace Chat{
                                 return 1;
                         }
                         
-                        int send_broadcast_message(int msg_type){
-                                
-                                return 0;
-                        }
                         
                         int udp_conn_operation(int conn_tp,struct sockaddr_in client,char *host_name){
                                 
@@ -72,7 +72,7 @@ namespace Chat{
                                                 delete []buff;
                                                 continue;
                                         }
-                                        MessagePacket *temp_msg = reinterpret_cast<MessagePacket*>(buff);
+                                       MessagePacket *temp_msg = reinterpret_cast<MessagePacket*>(buff);
                                        int conn_type = temp_msg->connection_manipulation();
                                        udp_conn_operation(conn_type,cliaddr,temp_msg->packet_raw_data);
                                        delete temp_msg;
@@ -92,6 +92,8 @@ namespace Chat{
                         int broadcast = 1;
                         bool close_flag = false;
                         Active_Clients *act_clients;
+                        std::thread *udp_listen_th;
+                        
                         
         };
         

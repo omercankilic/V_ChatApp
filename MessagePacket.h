@@ -13,6 +13,7 @@ namespace Chat {
                 CONNECTION_MESSAGE,
                 CONNECTION_ACCEPT,
                 CONNECTION_REFUSED,
+                CONNECTION_RESPOND,
                 UNDEFINED,
         };
         
@@ -21,7 +22,7 @@ namespace Chat {
                         uint8_t                      packet_type;              // 1byte
                         uint16_t                   packet_raw_data_size;//2 byte
                         uint32_t                   packet_timestamp; // 4 bytes
-                        char                        packet_raw_data[3000]  ; // 3000 bytes for string message
+                        char                           packet_raw_data[3000]  ; // 3000 bytes for string message
                         //MessagePacket constructor//
                         MessagePacket(const uint8_t type,
                                                       const uint16_t raw_data_size,
