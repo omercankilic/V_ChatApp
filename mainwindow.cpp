@@ -76,9 +76,15 @@ void MainWindow::message_received() {
 }
 
 void MainWindow::active_clients() {
-    QList<QListWidgetItem *> items = ui->activeClientsList->findItems("omercan1", Qt::MatchExactly);
-    if(items.size() == 0) {
-        ui->activeClientsList->addItem("omercan1");
+    while(true) {
+        for(int i = 0; i < this->mw_act_clients.online_clients.size(); i++) {
+            QString username = QString::fromStdString(this->mw_act_clients.online_clients.at(i).first);
+            QList<QListWidgetItem *> items = ui->activeClientsList->findItems(username, Qt::MatchExactly);
+            if(items.size() == 0) {
+                ui->activeClientsList->addItem(username);
+            }
+        }
+        sleep(10);
     }
 }
 

@@ -23,6 +23,8 @@
 #include <thread>
 #include <fstream>
 #include <sstream>
+#include <fcntl.h>
+#include <unistd.h>
 
 
 
@@ -64,7 +66,7 @@ namespace Chat {
                 act_clients = act_c;
                 tcp_listen_th = new std::thread( [this](){ socket_listen();});
                 set_discover_ip_list();
-
+                send_discover_msg();
             }
 
             Tcp_Socket(){
@@ -286,6 +288,7 @@ namespace Chat {
             }
 
             int send_discover_msg(){
+                long arg;
                 struct sockaddr_in client_to;
                 int temp_sock = socket(AF_INET,SOCK_STREAM,0);
                 client_to.sin_family = AF_INET;
@@ -295,6 +298,14 @@ namespace Chat {
                     if(inet_pton(AF_INET,discover_ip_list.at(i).c_str(),&client_to.sin_addr)<=0){
                         std::cout<<"Can not inet_pton : "<<discover_ip_list.at(i)<<std::endl;
                     }
+                    if( (arg = fcntl(temp_sock, F_GETFL, NULL)) < 0) {
+                         fprintf(stderr, "Error fcntl(..., F_GETFL) (%s)\n", strerror(errno));
+                      }
+                      arg |= O_NONBLOCK;
+                      if( fcntl(temp_sock, F_SETFL, arg) < 0) {
+                         fprintf(stderr, "Error fcntl(..., F_SETFL) (%s)\n", strerror(errno));
+                     }
+
                     if(connect(temp_sock,(struct sockaddr *)&client_to,sizeof(client_to)) <0){
                         std::cout<<"Can not connect to : "<<discover_ip_list.at(i)<<std::endl;
                     }
