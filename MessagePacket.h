@@ -13,6 +13,7 @@ namespace Chat {
                 CONNECTION_MESSAGE,
                 CONNECTION_ACCEPT,
                 CONNECTION_REFUSED,
+                CONNECTION_RESPOND,
                 UNDEFINED,
         };
         

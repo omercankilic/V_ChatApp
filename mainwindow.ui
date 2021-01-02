@@ -36,128 +36,8 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QFormLayout" name="formLayout_2">
-    <item row="0" column="0">
+    <item row="0" column="1">
      <layout class="QFormLayout" name="formLayout">
-      <item row="0" column="0">
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
-         <widget class="QListView" name="msgListView">
-          <property name="minimumSize">
-           <size>
-            <width>431</width>
-            <height>289</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>431</width>
-            <height>289</height>
-           </size>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">QListView{
-border:2px  solid grey;
-border-radius:5px;
-}</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <layout class="QVBoxLayout" name="verticalLayout">
-          <item>
-           <widget class="QLabel" name="activeClientsLabel">
-            <property name="text">
-             <string>Active Clients</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QTableView" name="activeClientsTable">
-            <property name="minimumSize">
-             <size>
-              <width>225</width>
-              <height>234</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>225</width>
-              <height>237</height>
-             </size>
-            </property>
-            <property name="styleSheet">
-             <string notr="true"/>
-            </property>
-            <attribute name="horizontalHeaderDefaultSectionSize">
-             <number>102</number>
-            </attribute>
-           </widget>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <item>
-             <widget class="QPushButton" name="removeClientButton">
-              <property name="minimumSize">
-               <size>
-                <width>70</width>
-                <height>21</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>70</width>
-                <height>21</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Remove</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="activateClientButton">
-              <property name="minimumSize">
-               <size>
-                <width>70</width>
-                <height>21</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>70</width>
-                <height>21</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Activate</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="videoButton">
-              <property name="minimumSize">
-               <size>
-                <width>70</width>
-                <height>21</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>70</width>
-                <height>21</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Video</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </item>
       <item row="1" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
@@ -232,6 +112,140 @@ border-radius:5px;
         </item>
        </layout>
       </item>
+      <item row="0" column="0">
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="1" column="0" rowspan="2">
+         <widget class="QListWidget" name="msgListWidget">
+          <property name="minimumSize">
+           <size>
+            <width>431</width>
+            <height>289</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>431</width>
+            <height>289</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <widget class="QLabel" name="activeClientsLabel">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Active Clients</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="refreshList">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Refresh</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QListWidget" name="activeClientsList">
+            <property name="minimumSize">
+             <size>
+              <width>225</width>
+              <height>234</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>225</width>
+              <height>234</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QPushButton" name="removeClientButton">
+              <property name="minimumSize">
+               <size>
+                <width>70</width>
+                <height>21</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>70</width>
+                <height>21</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Remove</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="activateClientButton">
+              <property name="minimumSize">
+               <size>
+                <width>70</width>
+                <height>21</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>70</width>
+                <height>21</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Activate</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="videoButton">
+              <property name="minimumSize">
+               <size>
+                <width>70</width>
+                <height>21</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>70</width>
+                <height>21</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Video</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
      </layout>
     </item>
    </layout>
@@ -248,9 +262,6 @@ border-radius:5px;
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <tabstops>
-  <tabstop>msgListView</tabstop>
- </tabstops>
  <resources/>
  <connections/>
 </ui>

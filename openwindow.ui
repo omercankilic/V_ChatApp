@@ -68,7 +68,7 @@
           <widget class="QLineEdit" name="usernameLineEdit"/>
          </item>
          <item>
-          <widget class="QLineEdit" name="ipLineEdit"/>
+          <widget class="QComboBox" name="ipList"/>
          </item>
         </layout>
        </item>
