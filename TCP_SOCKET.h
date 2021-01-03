@@ -59,8 +59,7 @@ namespace Chat {
             std::vector<std::string> message;
             bool  is_connected = false;
 
-            Tcp_Socket(std::string username, std::string ip_addr,Active_Clients *act_c){
-                this->user_name = username;
+            Tcp_Socket(std::string ip_addr,Active_Clients *act_c){
                 ip_assigned = new char[ 16];
                 strcpy(ip_assigned,ip_addr.c_str());
                 create_socket();
@@ -294,19 +293,14 @@ namespace Chat {
                 int temp_sock = socket(AF_INET,SOCK_STREAM,0);
                 client_to.sin_family = AF_INET;
                 client_to.sin_port   = htons(52000);
-                char arr[30];
-                strcpy(arr, user_name.c_str());
 
                 for(int i=0;i<(int)discover_ip_list.size();i++){
-                    char ip[16];
-                    strcpy(ip, discover_ip_list.at(i).c_str());
-                    if(inet_pton(AF_INET,ip,&client_to.sin_addr)<=0){
+                    if(inet_pton(AF_INET,discover_ip_list.at(i).c_str(),&client_to.sin_addr)<=0){
                         std::cout<<"Can not inet_pton : "<<discover_ip_list.at(i)<<std::endl;
                     }
                     if( (arg = fcntl(temp_sock, F_GETFL, NULL)) < 0) {
                          fprintf(stderr, "Error fcntl(..., F_GETFL) (%s)\n", strerror(errno));
                       }
-
                       arg |= O_NONBLOCK;
                       if( fcntl(temp_sock, F_SETFL, arg) < 0) {
                          fprintf(stderr, "Error fcntl(..., F_SETFL) (%s)\n", strerror(errno));
@@ -315,8 +309,7 @@ namespace Chat {
                     if(connect(temp_sock,(struct sockaddr *)&client_to,sizeof(client_to)) <0){
                         std::cout<<"Can not connect to : "<<discover_ip_list.at(i)<<std::endl;
                     }
-
-                    MessagePacket *temp_packet = new MessagePacket((uint8_t)CONNECTION_ONLINE,3000,0,arr);
+                    MessagePacket *temp_packet = new MessagePacket(CONNECTION_ONLINE,3000,0,(char*)user_name.c_str());
                     char *packet = reinterpret_cast<char*>(temp_packet);
                     send(temp_sock,packet,3007,0);
                     delete temp_packet;

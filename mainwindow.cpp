@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent,std::string ip_n,std::string user_n)
          ip_addres = ip_n;
          user_name = user_n;
          this->mw_udp_socket = new Udp_Socket(ip_addres, &mw_act_clients);
-         this->mw_tcp_socket = new Tcp_Socket(ip_addres, &mw_act_clients);
+         this->mw_tcp_socket = new Tcp_Socket(user_name, ip_addres, &mw_act_clients);
          message_receive = new std::thread( [this](){ message_received();});
          active_client = new std::thread( [this](){ active_clients();});
 }
