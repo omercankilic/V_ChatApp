@@ -16,8 +16,9 @@ MainWindow::MainWindow(QWidget *parent,std::string ip_n,std::string user_n)
          user_name = user_n;
          this->mw_udp_socket = new Udp_Socket(ip_addres, &mw_act_clients);
          this->mw_tcp_socket = new Tcp_Socket(user_name, ip_addres, &mw_act_clients);
-         message_receive = new std::thread( [this](){ message_received();});
-         active_client = new std::thread( [this](){ active_clients();});
+         
+         connect(this->mw_tcp_socket,&Tcp_Socket::new_msg_came,this,&MainWindow::msg_message_rcv);
+         connect(this->mw_tcp_socket,&Tcp_Socket::new_msg_online,this,&MainWindow::msg_message_onl);
 }
 
 MainWindow::~MainWindow()
@@ -63,28 +64,20 @@ void MainWindow::on_activeClientsList_itemDoubleClicked(QListWidgetItem *item)
     ui->msgListWidget->clear();
 }
 
-void MainWindow::message_received() {
-    while(true) {
-        if (this->mw_tcp_socket->message.size() != 0) {
-            time_t now = time(0);
-            tm *ltm = localtime(&now);
-            std::string ttime = "[" + add_zero(ltm->tm_hour) + ":" + add_zero(ltm->tm_min) + ":" + add_zero(ltm->tm_sec) + "]";
-            ui->msgListWidget->addItem(QString::fromStdString(ttime) + " " + QString::fromStdString(this->mw_act_clients.active_client_host_name) + ": " + QString::fromStdString(this->mw_tcp_socket->message.back()));
-            this->mw_tcp_socket->message.pop_back();
-        }
+void MainWindow::msg_message_onl(QString username) {
+
+    QList<QListWidgetItem *> items = ui->activeClientsList->findItems(username, Qt::MatchExactly);
+    if(items.size() == 0) {
+        ui->activeClientsList->addItem(username);
     }
+    
 }
 
-void MainWindow::active_clients() {
-    while(true) {
-        for(int i = 0; i < this->mw_act_clients.online_clients.size(); i++) {
-            QString username = QString::fromStdString(this->mw_act_clients.online_clients.at(i).first);
-            QList<QListWidgetItem *> items = ui->activeClientsList->findItems(username, Qt::MatchExactly);
-            if(items.size() == 0) {
-                ui->activeClientsList->addItem(username);
-            }
-        }
-        sleep(10);
-    }
+void MainWindow::msg_message_rcv(QString msg){
+    time_t now = time(0);
+    tm *ltm = localtime(&now);
+    std::string ttime = "[" + add_zero(ltm->tm_hour) + ":" + add_zero(ltm->tm_min) + ":" + add_zero(ltm->tm_sec) + "]";
+    ui->msgListWidget->addItem(QString::fromStdString(ttime) + " " + QString::fromStdString(this->mw_act_clients.active_client_host_name) + ": " + msg);
+    
 }
 

@@ -28,11 +28,10 @@ class MainWindow : public QMainWindow
         private slots:
                 
                 void on_sendMsgButton_clicked();
-                void active_clients();
-                void message_received();
                 void on_activeClientsList_itemDoubleClicked(QListWidgetItem *item);
-
-
+                void msg_message_onl(QString);
+                void msg_message_rcv(QString);
+     
         private:
                  Ui::MainWindow *ui;
                  std::string ip_addres;

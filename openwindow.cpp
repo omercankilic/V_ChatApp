@@ -33,7 +33,7 @@ OpenWindow::~OpenWindow()
 void OpenWindow::on_loginButton_clicked()
 {
     if(ui->usernameLineEdit->text().isEmpty() == false){
-            std::string ip_n = ui->ipList->currentText().toStdString();
+            std::string ip_n   = ui->ipList->currentText().toStdString();
             std::string user_n = ui->usernameLineEdit->text().toStdString();
 
             QWidget *parent = nullptr;
