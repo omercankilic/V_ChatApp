@@ -71,9 +71,9 @@ namespace Chat {
             
             //Api Functions
             int create_socket();
-            int send_message(std::string msg,std::string ip, int conn_type);
+            void send_message(std::string msg,std::string ip, int conn_type);
             int send_connection_request(std::string host_ip);
-            int is_accepted_f(char *host_name, struct sockaddr_in &client);
+            void is_accepted_f(char *host_name, struct sockaddr_in &client);
             int socket_listen();
             int set_discover_ip_list();       
             int send_discover_msg();

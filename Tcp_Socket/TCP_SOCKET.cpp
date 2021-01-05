@@ -90,7 +90,8 @@ namespace Chat{
                         send_message(ip_assigned, client_ip, CONNECTION_REFUSED);
                         close(temp_client_sockfd);
                     }
-                    delete temp_message_packet;
+                    temp_message_packet = nullptr;
+                    //delete temp_message_packet;
                 }else if(res == CONNECTION_STOP){
     
                     if( this->act_clients->active_client_ip_addr == std::string(client_ip)){
@@ -231,7 +232,7 @@ namespace Chat{
         return 1;
     }
     
-    int Tcp_Socket::send_message(std::string msg, std::string ip, int conn_type){
+    void Tcp_Socket::send_message(std::string msg, std::string ip, int conn_type){
         struct sockaddr_in client_to;
         int temp_sock = socket(AF_INET,SOCK_STREAM,0);
         client_to.sin_family = AF_INET;
@@ -256,7 +257,9 @@ namespace Chat{
         send(temp_sock,msg_pkt,3007,0);
         close(temp_sock);
         delete msg_packet;
-        return 1;
+        msg_pkt = nullptr;
+        //delete msg_packet;
+        //return 1;
     }
     
     int Tcp_Socket::send_connection_request(std::string host_ip){
@@ -290,43 +293,30 @@ namespace Chat{
 
     }
     
-    int Tcp_Socket::is_accepted_f(char *host_name, struct sockaddr_in &client){
+    void Tcp_Socket::is_accepted_f(char *host_name, struct sockaddr_in &client){
         
         char client_ip[16];
 
         inet_ntop(AF_INET,&client.sin_addr,client_ip,16);
 
 
-        std::thread *t_info_thread = new std::thread([&](){
-            //QMessageBox msg_box;
-            //QString info_msg = (QString)client_name+" want to talk to you? Yes/No ?";           
-            //msg_box.setWindowTitle("Connection Information");
-            //msg_box.setText(info_msg);
-            //msw_box.setStandardButtons(QMessageBox::Yes);
-            //msg_box.setDefaultButton(QMessageBox::Yes);
-            //msw_box.setStandardButtons(QMessageBox::No);
-            //msg_box.setDefaultButton(QMessageBox::No);
-            //
-            //if(QMessageBox::Yes ==  msg_box.exec()){
-            //    send_message(this->user_name,ip_address,CONNECTION_ACCEPT);
-            //}else{
-            //    send_message(this->user_name,ip_address,CONNECTION_REFUSED);
-            //}
+      //  std::thread *t_info_thread = new std::thread([&](){
             QString que = QString::fromStdString(std::string(host_name)) + " wants to talk to you ? (Yes/No)?";
-            if (QMessageBox::Yes == QMessageBox(QMessageBox::Information, "title", que, QMessageBox::Yes|QMessageBox::No).exec()) 
-            {
-                if(false == this->is_connected){
-                    send_message(this->user_name,std::string(client_ip),CONNECTION_ACCEPT);
-                }else{
-                    send_message(this->user_name,std::string(client_ip),CONNECTION_REFUSED);
-                }
-            }else{
-                send_message(this->user_name,std::string(client_ip),CONNECTION_REFUSED);
-            }
+            //if (QMessageBox::Yes == QMessageBox(QMessageBox::Information, "title", que, QMessageBox::Yes|QMessageBox::No).exec()) 
+            //{
+                this->act_clients->active_client_ip_addr = std::string(client_ip);
+                this->act_clients->active_client_host_name = std::string(host_name);
+                this->is_connected = true;
+                send_message(this->user_name,std::string(client_ip),CONNECTION_ACCEPT);
+            ///}else{
+            ///    send_message(this->user_name,std::string(client_ip),CONNECTION_REFUSED);
+            ///}
             
-        });
-        t_info_thread->detach();
-        return 1;
+        //});
+        //t_info_thread->join();
+        //        
+        //delete t_info_thread;
+        //return 1;
     }
    
     

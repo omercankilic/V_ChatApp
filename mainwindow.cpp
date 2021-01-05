@@ -98,6 +98,10 @@ void MainWindow::on_activateClientButton_clicked()
     
     if(temp_item !=NULL){
         
+        
+        if(this->mw_tcp_socket->is_connected == true){
+            this->mw_tcp_socket->send_message("", this->mw_act_clients.active_client_ip_addr,CONNECTION_STOP);
+        }
         this->mw_tcp_socket->is_connected = false;
         this->mw_act_clients.active_client_ip_addr      = "";
         this->mw_act_clients.active_client_host_name    = "";
