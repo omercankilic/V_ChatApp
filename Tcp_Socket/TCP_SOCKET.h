@@ -28,6 +28,7 @@
 
 #include <QObject>
 #include <QMessageBox>
+#include <QIcon>
 
 #include "MessagePacket.h"
 #include "ActiveClients/Active_Clients.h"
@@ -59,8 +60,9 @@ namespace Chat {
             
             
         signals:
-            void new_msg_came   (QString);
+            void new_msg_came   (QString);//Message type == MESSAGE
             void new_msg_online (QString);
+            void new_msg_accepted_clr();
             
         public:
             std::vector<std::string> message;
@@ -69,7 +71,7 @@ namespace Chat {
             
             //Api Functions
             int create_socket();
-            int send_message(std::string msg);
+            int send_message(std::string msg,std::string ip, int conn_type);
             int send_connection_request(std::string host_ip);
             int is_accepted_f(char *host_name, struct sockaddr_in &client);
             int socket_listen();

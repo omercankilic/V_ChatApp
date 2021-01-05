@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent,std::string ip_n,std::string user_n)
          
          connect(this->mw_tcp_socket,&Tcp_Socket::new_msg_came,this,&MainWindow::msg_message_rcv);
          connect(this->mw_tcp_socket,&Tcp_Socket::new_msg_online,this,&MainWindow::msg_message_onl);
+         connect(this->mw_tcp_socket,&Tcp_Socket::new_msg_accepted_clr,this,&MainWindow::msg_box_clr);
 }
 
 MainWindow::~MainWindow()
@@ -52,8 +53,9 @@ void MainWindow::on_sendMsgButton_clicked()
         ui->msgListWidget->addItem(QString::fromStdString(ttime) + " " + QString::fromStdString(user_name) + ": " + message);
 
         if(this->mw_tcp_socket->is_connected == true) {
-            this->mw_tcp_socket->send_message(message.toStdString());
+            this->mw_tcp_socket->send_message(message.toStdString(),this->mw_act_clients.active_client_ip_addr,CONNECTION_MESSAGE);
         }
+        
     }
 }
 
@@ -61,7 +63,14 @@ void MainWindow::on_sendMsgButton_clicked()
 
 void MainWindow::on_activeClientsList_itemDoubleClicked(QListWidgetItem *item)
 {
-    ui->msgListWidget->clear();
+    //ui->msgListWidget->clear();
+    for(int i = 0 ;i<this->mw_act_clients.online_clients.size();i++){
+        if(this->mw_act_clients.online_clients.at(i).first == item->text().toStdString())
+        {
+            this->mw_tcp_socket->send_connection_request(this->mw_act_clients.online_clients.at(i).second);
+            break;
+        }
+    }
 }
 
 void MainWindow::msg_message_onl(QString username) {
@@ -81,3 +90,41 @@ void MainWindow::msg_message_rcv(QString msg){
     
 }
 
+
+void MainWindow::on_activateClientButton_clicked()
+{
+    
+    QListWidgetItem *temp_item = this->ui->activeClientsList->currentItem();
+    
+    if(temp_item !=NULL){
+        
+        this->mw_tcp_socket->is_connected = false;
+        this->mw_act_clients.active_client_ip_addr      = "";
+        this->mw_act_clients.active_client_host_name    = "";
+        
+        //ui->msgListWidget->clear();
+        for(int i = 0 ;i<this->mw_act_clients.online_clients.size();i++){
+            if(this->mw_act_clients.online_clients.at(i).first == temp_item->text().toStdString())
+            {
+                this->mw_tcp_socket->send_connection_request(this->mw_act_clients.online_clients.at(i).second);
+                break;
+            }
+        }
+    }
+    
+}
+
+void MainWindow::msg_box_clr()
+{
+    ui->msgListWidget->clear();
+}
+
+void MainWindow::on_stopClientButton_clicked()
+{
+    if(this->mw_tcp_socket->is_connected == true ){
+        this->mw_tcp_socket->is_connected = false;
+        this->mw_tcp_socket->send_message("",this->mw_act_clients.active_client_ip_addr,CONNECTION_STOP);
+        this->mw_act_clients.active_client_host_name = "";
+        this->mw_act_clients.active_client_ip_addr   = "";
+    }
+}

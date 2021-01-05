@@ -32,7 +32,12 @@ class MainWindow : public QMainWindow
                 void msg_message_onl(QString);
                 void msg_message_rcv(QString);
      
-        private:
+                void on_activateClientButton_clicked();
+                void msg_box_clr();
+                
+                void on_stopClientButton_clicked();
+                
+    private:
                  Ui::MainWindow *ui;
                  std::string ip_addres;
                  std::string user_name;
