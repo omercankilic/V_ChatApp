@@ -63,16 +63,16 @@ namespace Chat {
             void new_msg_came   (QString);//Message type == MESSAGE
             void new_msg_online (QString);
             void new_msg_accepted_clr();
-            void connectionStart(std::string, std::string);
-            void connectionRefused(std::string);
-            void connectionAccepted(std::string);
-            void connectionStopped(std::string);
+            void connectionStart(QString, QString);
+            void connectionRefused(QString);
+            void connectionAccepted(QString);
+            void connectionStopped(QString);
             
         public:
             std::vector<std::string> message;
             Tcp_Socket(std::string username, std::string ip_addr,Active_Clients *act_c);
             bool  is_connected = false;
-            char *ip_assigned = nullptr;
+            std::string user_name;
             
             //Api Functions
             int create_socket();
@@ -88,10 +88,10 @@ namespace Chat {
             std::thread *info_thread=nullptr;
             int server_sockfd, active_client_sockfd;
             uint16_t port_number = 52000;
+            char *ip_assigned = nullptr;
             struct sockaddr_in server_addr,  active_client_addr;
             //MessagePacket *input_msg;
             Active_Clients *act_clients;
-            std::string user_name;
             std::vector<std::string> discover_ip_list;
             std::thread *tcp_listen_th;
     };

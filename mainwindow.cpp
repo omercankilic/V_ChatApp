@@ -66,7 +66,13 @@ void MainWindow::on_sendMsgButton_clicked()
 
 void MainWindow::on_activeClientsList_itemDoubleClicked(QListWidgetItem *item)
 {
-    //ui->msgListWidget->clear();
+    if(this->mw_tcp_socket->is_connected == true){
+        this->mw_tcp_socket->send_message("", this->mw_act_clients.active_client_ip_addr,CONNECTION_STOP);
+    }
+    this->mw_tcp_socket->is_connected = false;
+    this->mw_act_clients.active_client_ip_addr      = "";
+    this->mw_act_clients.active_client_host_name    = "";
+
     for(int i = 0 ;i<this->mw_act_clients.online_clients.size();i++){
         if(this->mw_act_clients.online_clients.at(i).first == item->text().toStdString())
         {
@@ -109,7 +115,6 @@ void MainWindow::on_activateClientButton_clicked()
         this->mw_act_clients.active_client_ip_addr      = "";
         this->mw_act_clients.active_client_host_name    = "";
         
-        //ui->msgListWidget->clear();
         for(int i = 0 ;i<this->mw_act_clients.online_clients.size();i++){
             if(this->mw_act_clients.online_clients.at(i).first == temp_item->text().toStdString())
             {
@@ -130,28 +135,29 @@ void MainWindow::on_stopClientButton_clicked()
 {
     if(this->mw_tcp_socket->is_connected == true ){
         this->mw_tcp_socket->is_connected = false;
-        this->mw_tcp_socket->send_message("",this->mw_act_clients.active_client_ip_addr,CONNECTION_STOP);
+        this->mw_tcp_socket->send_message(this->mw_tcp_socket->user_name,this->mw_act_clients.active_client_ip_addr,CONNECTION_STOP);
         this->mw_act_clients.active_client_host_name = "";
         this->mw_act_clients.active_client_ip_addr   = "";
+        ui->msgListWidget->clear();
     }
 }
 
-void MainWindow::connectionStart(std::string username, std::string client_ip) {
+void MainWindow::connectionStart(QString username, QString client_ip) {
     ConnectionStartDialog dialog(this, this->mw_tcp_socket, username, client_ip);
     dialog.setModal(true);
     dialog.exec();
 }
-void MainWindow::connectionAccepted(std::string username) {
+void MainWindow::connectionAccepted(QString username) {
     ConnectionAcceptedDialog dialog(this, username);
     dialog.setModal(true);
     dialog.exec();
 }
-void MainWindow::connectionRefused(std::string username) {
+void MainWindow::connectionRefused(QString username) {
     ConnectionRefusedDialog dialog(this, username);
     dialog.setModal(true);
     dialog.exec();
 }
-void MainWindow::connectionStopped(std::string username) {
+void MainWindow::connectionStopped(QString username) {
     ConnectionStopDialog dialog(this, username);
     dialog.setModal(true);
     dialog.exec();

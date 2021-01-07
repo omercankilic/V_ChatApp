@@ -17,20 +17,23 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>20</y>
+     <y>9</y>
      <width>251</width>
-     <height>20</height>
+     <height>51</height>
     </rect>
    </property>
    <property name="text">
     <string>Connection is stopped.</string>
    </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>180</x>
-     <y>60</y>
+     <x>190</x>
+     <y>70</y>
      <width>89</width>
      <height>25</height>
     </rect>

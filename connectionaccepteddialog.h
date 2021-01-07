@@ -12,7 +12,7 @@ class ConnectionAcceptedDialog : public QDialog
     Q_OBJECT
 
 public:
-    ConnectionAcceptedDialog(QWidget *parent = nullptr, std::string username="");
+    ConnectionAcceptedDialog(QWidget *parent = nullptr, QString username="");
     ~ConnectionAcceptedDialog();
 
 private slots:

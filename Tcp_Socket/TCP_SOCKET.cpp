@@ -74,7 +74,7 @@ namespace Chat{
                         act_clients->active_client_ip_addr = std::string(client_ip);
                         act_clients->active_client_host_name = temp_name;
                         is_connected = true;
-                        emit connectionStart((std::string)temp_message_packet->packet_raw_data, client_ip);
+                        emit connectionStart((QString)temp_message_packet->packet_raw_data, client_ip);
                         //is_accepted_f(temp_message_packet->packet_raw_data,temp_client_addr);
                         //close(temp_client_sockfd);
                         //if( ACCEPTED== is_accepted_f(temp_message_packet->packet_raw_data,temp_client_addr)){
@@ -107,7 +107,7 @@ namespace Chat{
                         is_connected = false;
                         act_clients->active_client_ip_addr  ="";
                         act_clients->active_client_host_name= "";
-                        emit connectionStopped((std::string)temp_message_packet->packet_raw_data);
+                        emit connectionStopped((QString)temp_message_packet->packet_raw_data);
                     }
                     close(temp_client_sockfd);
                 }else if(res == CONNECTION_MESSAGE){
@@ -147,7 +147,7 @@ namespace Chat{
                         this->act_clients->active_client_ip_addr   = client_ip;
                         is_connected = true;
                         
-                        emit connectionAccepted((std::string)temp_message_packet->packet_raw_data);
+                        emit connectionAccepted((QString)temp_message_packet->packet_raw_data);
                         //std::thread *t_info_thread = new std::thread([=](){
                         //    QMessageBox msg_box;
                         //    QString info_msg = (QString)temp_message_packet->packet_raw_data+" accepted your connection request :) ";
@@ -163,7 +163,7 @@ namespace Chat{
                     }
                     close(temp_client_sockfd);
                 }else if(res == (uint8_t)CONNECTION_REFUSED){
-                    emit connectionRefused((std::string)temp_message_packet->packet_raw_data);
+                    emit connectionRefused((QString)temp_message_packet->packet_raw_data);
                     //std::thread *t_info_thread = new std::thread([=](){
                     //    QMessageBox msg_box;
                     //    QString info_msg = (QString)temp_message_packet->packet_raw_data+" REFUSED your connection request :( ";
@@ -190,37 +190,50 @@ namespace Chat{
     }
     
     int Tcp_Socket::send_discover_msg(){
-        long arg;
         struct sockaddr_in client_to;
         int temp_sock = socket(AF_INET,SOCK_STREAM,0);
         client_to.sin_family = AF_INET;
         client_to.sin_port   = htons(52000);
+        fd_set fdset;
+        struct timeval tv;
         char arr[30];
         strcpy(arr, user_name.c_str());
 
         for(int i=0;i<(int)discover_ip_list.size();i++){
+
             char ip[16];
             strcpy(ip, discover_ip_list.at(i).c_str());
             if(inet_pton(AF_INET,ip,&client_to.sin_addr)<=0){
                 std::cout<<"Can not inet_pton : "<<discover_ip_list.at(i)<<std::endl;
             }
-            //if( (arg = fcntl(temp_sock, F_GETFL, NULL)) < 0) {
-            //     fprintf(stderr, "Error fcntl(..., F_GETFL) (%s)\n", strerror(errno));
-            //  }
-            //
-            //  arg |= O_NONBLOCK;
-            //  if( fcntl(temp_sock, F_SETFL, arg) < 0) {
-            //     fprintf(stderr, "Error fcntl(..., F_SETFL) (%s)\n", strerror(errno));
-            // }
+
+            fcntl(temp_sock, F_SETFL, O_NONBLOCK);
 
             if(::connect(temp_sock,(struct sockaddr *)&client_to,sizeof(client_to)) <0){
                 std::cout<<"Can not connect to : "<<discover_ip_list.at(i)<<std::endl;
             }
 
-            MessagePacket *temp_packet = new MessagePacket((uint8_t)CONNECTION_ONLINE,3000,0,arr);
-            char *packet = reinterpret_cast<char*>(temp_packet);
-            send(temp_sock,packet,3007,0);
-            delete temp_packet;
+            FD_ZERO(&fdset);
+            FD_SET(temp_sock, &fdset);
+            tv.tv_sec = 3;             /* second timeout */
+            tv.tv_usec = 0;
+
+            if (select(temp_sock + 1, NULL, &fdset, NULL, &tv) == 1){
+                int so_error;
+                socklen_t len = sizeof so_error;
+
+                getsockopt(temp_sock, SOL_SOCKET, SO_ERROR, &so_error, &len);
+
+                if (so_error == 0) {
+                    printf("%s is open\n", ip);
+                    MessagePacket *temp_packet = new MessagePacket((uint8_t)CONNECTION_ONLINE,3000,0,arr);
+                    char *packet = reinterpret_cast<char*>(temp_packet);
+                    send(temp_sock,packet,3007,0);
+                    delete temp_packet;
+                }
+            }
+
+
         }
         close(temp_sock);
         return 1;
@@ -228,8 +241,8 @@ namespace Chat{
     
     int Tcp_Socket::set_discover_ip_list(){
         char cmd[136];
-        strcpy(cmd, "echo \"25.114.184.185\" > ip.txt");
-        //strcpy(cmd,"s=192.168.1; for i in $(seq 0 254) ; do ( ping -c 1 -w 1 $s.$i 1>/dev/null 2>&1 && printf \\\"$s.$i \\\" ) & done | sed 's/\"/\\n/g' > ip.txt");
+        //strcpy(cmd, "echo \"192.168.1.77\" > ip.txt");
+        strcpy(cmd,"s=192.168.1; for i in $(seq 0 254) ; do ( ping -c 1 -w 1 $s.$i 1>/dev/null 2>&1 && printf \\\"$s.$i \\\" ) & done | sed 's/\"/\\n/g' > ip.txt");
         //std::cout<<"cmd : "<<cmd<<std::endl;
         system(cmd);
         std::ifstream infile("ip.txt");

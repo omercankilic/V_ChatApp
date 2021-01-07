@@ -12,7 +12,7 @@ class ConnectionStopDialog : public QDialog
     Q_OBJECT
 
 public:
-    ConnectionStopDialog(QWidget *parent = nullptr, std::string username="");
+    ConnectionStopDialog(QWidget *parent = nullptr, QString username="");
     ~ConnectionStopDialog();
 
 private slots:

@@ -15,7 +15,7 @@ class ConnectionStartDialog : public QDialog
     Q_OBJECT
 
 public:
-    ConnectionStartDialog(QWidget *parent = nullptr, Tcp_Socket *tcp = nullptr, std::string username ="", std::string client_ip = "");
+    ConnectionStartDialog(QWidget *parent = nullptr, Tcp_Socket *tcp = nullptr, QString username ="", QString client_ip = "");
     ~ConnectionStartDialog();
 
 private slots:
@@ -27,6 +27,7 @@ private:
     Ui::ConnectionStartDialog *ui;
     Tcp_Socket *tcp;
     std::string client_ip;
+    std::string username;
 };
 
 #endif // CONNECTIONSTARTDIALOG_H

@@ -12,7 +12,7 @@ class ConnectionRefusedDialog : public QDialog
     Q_OBJECT
 
 public:
-    ConnectionRefusedDialog(QWidget *parent = nullptr, std::string username="");
+    ConnectionRefusedDialog(QWidget *parent = nullptr, QString username="");
     ~ConnectionRefusedDialog();
 
 private slots:

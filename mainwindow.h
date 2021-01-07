@@ -35,10 +35,10 @@ class MainWindow : public QMainWindow
                 void on_activeClientsList_itemDoubleClicked(QListWidgetItem *item);
                 void msg_message_onl(QString);
                 void msg_message_rcv(QString);
-                void connectionStart(std::string, std::string);
-                void connectionAccepted(std::string);
-                void connectionRefused(std::string);
-                void connectionStopped(std::string);
+                void connectionStart(QString, QString);
+                void connectionAccepted(QString);
+                void connectionRefused(QString);
+                void connectionStopped(QString);
      
                 void on_activateClientButton_clicked();
                 void msg_box_clr();

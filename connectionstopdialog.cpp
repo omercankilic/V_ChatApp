@@ -1,12 +1,12 @@
 #include "connectionstopdialog.h"
 #include "ui_connectionstopdialog.h"
 
-ConnectionStopDialog::ConnectionStopDialog(QWidget *parent, std::string username) :
+ConnectionStopDialog::ConnectionStopDialog(QWidget *parent, QString username) :
     QDialog(parent),
     ui(new Ui::ConnectionStopDialog)
 {
-    ui->label->setText(QString::fromStdString(username) + "stopped connection.");
     ui->setupUi(this);
+    ui->label->setText(username + " stopped connection.");
 }
 
 ConnectionStopDialog::~ConnectionStopDialog()

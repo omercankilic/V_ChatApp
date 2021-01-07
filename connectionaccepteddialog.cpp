@@ -1,12 +1,12 @@
 #include "connectionaccepteddialog.h"
 #include "ui_connectionaccepteddialog.h"
 
-ConnectionAcceptedDialog::ConnectionAcceptedDialog(QWidget *parent, std::string username) :
+ConnectionAcceptedDialog::ConnectionAcceptedDialog(QWidget *parent, QString username) :
     QDialog(parent),
     ui(new Ui::ConnectionAcceptedDialog)
 {
-    ui->label->setText(QString::fromStdString(username) + "accepted your connection request.");
     ui->setupUi(this);
+    ui->label->setText(username + " accepted your connection request.");
 }
 
 ConnectionAcceptedDialog::~ConnectionAcceptedDialog()

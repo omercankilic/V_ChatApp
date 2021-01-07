@@ -1,12 +1,12 @@
 #include "connectionrefuseddialog.h"
 #include "ui_connectionrefuseddialog.h"
 
-ConnectionRefusedDialog::ConnectionRefusedDialog(QWidget *parent, std::string username) :
+ConnectionRefusedDialog::ConnectionRefusedDialog(QWidget *parent, QString username) :
     QDialog(parent),
     ui(new Ui::ConnectionRefusedDialog)
 {
-    ui->label->setText(QString::fromStdString(username) + "refused your connection request.");
     ui->setupUi(this);
+    ui->label->setText(username + " refused your connection request.");
 }
 
 ConnectionRefusedDialog::~ConnectionRefusedDialog()
