@@ -53,9 +53,9 @@ void MainWindow::on_sendMsgButton_clicked()
         time_t now = time(0);
         tm *ltm = localtime(&now);
         std::string ttime = "[" + add_zero(ltm->tm_hour) + ":" + add_zero(ltm->tm_min) + ":" + add_zero(ltm->tm_sec) + "]";
-        ui->msgListWidget->addItem(QString::fromStdString(ttime) + " " + QString::fromStdString(user_name) + ": " + message);
 
         if(this->mw_tcp_socket->is_connected == true) {
+            ui->msgListWidget->addItem(QString::fromStdString(ttime) + " " + QString::fromStdString(user_name) + ": " + message);
             this->mw_tcp_socket->send_message(message.toStdString(),this->mw_act_clients.active_client_ip_addr,CONNECTION_MESSAGE);
         }
         
