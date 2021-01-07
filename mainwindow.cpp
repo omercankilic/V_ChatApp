@@ -9,7 +9,6 @@ MainWindow::MainWindow(QWidget *parent,std::string ip_n,std::string user_n)
         , ui(new Ui::MainWindow)
 {
         ui->setupUi(this);
-        ui->activeClientsList->addItem("omercan");
 
          std::cout<<"Main window constructor was called"<<std::endl;
          ip_addres = ip_n;
@@ -20,6 +19,10 @@ MainWindow::MainWindow(QWidget *parent,std::string ip_n,std::string user_n)
          connect(this->mw_tcp_socket,&Tcp_Socket::new_msg_came,this,&MainWindow::msg_message_rcv);
          connect(this->mw_tcp_socket,&Tcp_Socket::new_msg_online,this,&MainWindow::msg_message_onl);
          connect(this->mw_tcp_socket,&Tcp_Socket::new_msg_accepted_clr,this,&MainWindow::msg_box_clr);
+         connect(this->mw_tcp_socket,&Tcp_Socket::connectionStart,this,&MainWindow::connectionStart);
+         connect(this->mw_tcp_socket,&Tcp_Socket::connectionAccepted,this,&MainWindow::connectionAccepted);
+         connect(this->mw_tcp_socket,&Tcp_Socket::connectionRefused,this,&MainWindow::connectionRefused);
+         connect(this->mw_tcp_socket,&Tcp_Socket::connectionStopped,this,&MainWindow::connectionStopped);
 }
 
 MainWindow::~MainWindow()
@@ -131,4 +134,25 @@ void MainWindow::on_stopClientButton_clicked()
         this->mw_act_clients.active_client_host_name = "";
         this->mw_act_clients.active_client_ip_addr   = "";
     }
+}
+
+void MainWindow::connectionStart(std::string username, std::string client_ip) {
+    ConnectionStartDialog dialog(this, this->mw_tcp_socket, username, client_ip);
+    dialog.setModal(true);
+    dialog.exec();
+}
+void MainWindow::connectionAccepted(std::string username) {
+    ConnectionAcceptedDialog dialog(this, username);
+    dialog.setModal(true);
+    dialog.exec();
+}
+void MainWindow::connectionRefused(std::string username) {
+    ConnectionRefusedDialog dialog(this, username);
+    dialog.setModal(true);
+    dialog.exec();
+}
+void MainWindow::connectionStopped(std::string username) {
+    ConnectionStopDialog dialog(this, username);
+    dialog.setModal(true);
+    dialog.exec();
 }

@@ -10,7 +10,7 @@ namespace Chat{
     
     Tcp_Socket::Tcp_Socket(std::string username, std::string ip_addr,Active_Clients *act_c){
         this->user_name = username;
-        ip_assigned = new char[ 16];
+        ip_assigned = new char[16];
         strcpy(ip_assigned,ip_addr.c_str());
         create_socket();
         act_clients = act_c;
@@ -69,8 +69,14 @@ namespace Chat{
                 res = temp_message_packet->connection_manipulation();
                 if(res == CONNECTION_START){
                     if(is_connected == false){
-                        is_accepted_f(temp_message_packet->packet_raw_data,temp_client_addr);
-                        close(temp_client_sockfd);
+                        std::string temp_name(temp_message_packet->packet_raw_data);
+                        act_clients->active_client_sockfd = temp_client_sockfd;
+                        act_clients->active_client_ip_addr = std::string(client_ip);
+                        act_clients->active_client_host_name = temp_name;
+                        is_connected = true;
+                        emit connectionStart((std::string)temp_message_packet->packet_raw_data, client_ip);
+                        //is_accepted_f(temp_message_packet->packet_raw_data,temp_client_addr);
+                        //close(temp_client_sockfd);
                         //if( ACCEPTED== is_accepted_f(temp_message_packet->packet_raw_data,temp_client_addr)){
                         //
                         //    close(temp_client_sockfd);
@@ -88,8 +94,10 @@ namespace Chat{
                         //}
                     }else{
                         send_message(ip_assigned, client_ip, CONNECTION_REFUSED);
-                        close(temp_client_sockfd);
+                        //send_message(ip_assigned, client_ip, CONNECTION_REFUSED);
+                        //close(temp_client_sockfd);
                     }
+                    close(temp_client_sockfd);
                     temp_message_packet = nullptr;
                     //delete temp_message_packet;
                 }else if(res == CONNECTION_STOP){
@@ -98,7 +106,8 @@ namespace Chat{
                         
                         is_connected = false;
                         act_clients->active_client_ip_addr  ="";
-                        act_clients->active_client_host_name= "";                        
+                        act_clients->active_client_host_name= "";
+                        emit connectionStopped((std::string)temp_message_packet->packet_raw_data);
                     }
                     close(temp_client_sockfd);
                 }else if(res == CONNECTION_MESSAGE){
@@ -138,31 +147,33 @@ namespace Chat{
                         this->act_clients->active_client_ip_addr   = client_ip;
                         is_connected = true;
                         
-                        std::thread *t_info_thread = new std::thread([=](){
-                            QMessageBox msg_box;
-                            QString info_msg = (QString)temp_message_packet->packet_raw_data+" accepted your connection request :) ";           
-                            msg_box.setWindowTitle("Connection Information");
-                            msg_box.setText(info_msg);
-                            msg_box.setStandardButtons(QMessageBox::Close);
-                            msg_box.setDefaultButton(QMessageBox::Close);
-                            msg_box.exec();
-                        });
-                        t_info_thread->detach();
+                        emit connectionAccepted((std::string)temp_message_packet->packet_raw_data);
+                        //std::thread *t_info_thread = new std::thread([=](){
+                        //    QMessageBox msg_box;
+                        //    QString info_msg = (QString)temp_message_packet->packet_raw_data+" accepted your connection request :) ";
+                        //    msg_box.setWindowTitle("Connection Information");
+                        //    msg_box.setText(info_msg);
+                        //    msg_box.setStandardButtons(QMessageBox::Close);
+                        //    msg_box.setDefaultButton(QMessageBox::Close);
+                        //    msg_box.exec();
+                        //});
+                        //t_info_thread->detach();
                         emit this->new_msg_accepted_clr();
                         
                     }
                     close(temp_client_sockfd);
                 }else if(res == (uint8_t)CONNECTION_REFUSED){
-                    std::thread *t_info_thread = new std::thread([=](){
-                        QMessageBox msg_box;
-                        QString info_msg = (QString)temp_message_packet->packet_raw_data+" REFUSED your connection request :( ";           
-                        msg_box.setWindowTitle("Connection Information");
-                        msg_box.setText(info_msg);
-                        msg_box.setStandardButtons(QMessageBox::Close);
-                        msg_box.setDefaultButton(QMessageBox::Close);
-                        msg_box.exec();
-                    });
-                    t_info_thread->detach();
+                    emit connectionRefused((std::string)temp_message_packet->packet_raw_data);
+                    //std::thread *t_info_thread = new std::thread([=](){
+                    //    QMessageBox msg_box;
+                    //    QString info_msg = (QString)temp_message_packet->packet_raw_data+" REFUSED your connection request :( ";
+                    //    msg_box.setWindowTitle("Connection Information");
+                    //    msg_box.setText(info_msg);
+                    //    msg_box.setStandardButtons(QMessageBox::Close);
+                    //    msg_box.setDefaultButton(QMessageBox::Close);
+                    //    msg_box.exec();
+                    //});
+                    //t_info_thread->detach();
                     close(temp_client_sockfd);
                     
                 }else{
@@ -293,31 +304,31 @@ namespace Chat{
 
     }
     
-    void Tcp_Socket::is_accepted_f(char *host_name, struct sockaddr_in &client){
-        
-        char client_ip[16];
-
-        inet_ntop(AF_INET,&client.sin_addr,client_ip,16);
-
-
-      //  std::thread *t_info_thread = new std::thread([&](){
-            QString que = QString::fromStdString(std::string(host_name)) + " wants to talk to you ? (Yes/No)?";
-            //if (QMessageBox::Yes == QMessageBox(QMessageBox::Information, "title", que, QMessageBox::Yes|QMessageBox::No).exec()) 
-            //{
-                this->act_clients->active_client_ip_addr = std::string(client_ip);
-                this->act_clients->active_client_host_name = std::string(host_name);
-                this->is_connected = true;
-                send_message(this->user_name,std::string(client_ip),CONNECTION_ACCEPT);
-            ///}else{
-            ///    send_message(this->user_name,std::string(client_ip),CONNECTION_REFUSED);
-            ///}
-            
-        //});
-        //t_info_thread->join();
-        //        
-        //delete t_info_thread;
-        //return 1;
-    }
+    //void Tcp_Socket::is_accepted_f(char *host_name, struct sockaddr_in &client){
+    //
+    //    char client_ip[16];
+    //
+    //    inet_ntop(AF_INET,&client.sin_addr,client_ip,16);
+    //
+    //
+    //  //  std::thread *t_info_thread = new std::thread([&](){
+    //        QString que = QString::fromStdString(std::string(host_name)) + " wants to talk to you ? (Yes/No)?";
+    //        //if (QMessageBox::Yes == QMessageBox(QMessageBox::Information, "title", que, QMessageBox::Yes|QMessageBox::No).exec())
+    //        //{
+    //            this->act_clients->active_client_ip_addr = std::string(client_ip);
+    //            this->act_clients->active_client_host_name = std::string(host_name);
+    //            this->is_connected = true;
+    //            send_message(this->user_name,std::string(client_ip),CONNECTION_ACCEPT);
+    //        ///}else{
+    //        ///    send_message(this->user_name,std::string(client_ip),CONNECTION_REFUSED);
+    //        ///}
+    //
+    //    //});
+    //    //t_info_thread->join();
+    //    //
+    //    //delete t_info_thread;
+    //    //return 1;
+    //}
    
     
     

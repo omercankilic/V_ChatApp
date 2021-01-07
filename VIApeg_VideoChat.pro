@@ -18,6 +18,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     Tcp_Socket/TCP_SOCKET.cpp \
     camera_capture.cpp \
+    connectionaccepteddialog.cpp \
+    connectionrefuseddialog.cpp \
+    connectionstartdialog.cpp \
+    connectionstopdialog.cpp \
     main.cpp \
     mainwindow.cpp \
     openwindow.cpp
@@ -30,11 +34,19 @@ HEADERS += \
     Tcp_Socket/TCP_SOCKET.h \
     Udp_Socket/UDP_SOCKET.h \
     camera_capture.h \
+    connectionaccepteddialog.h \
+    connectionrefuseddialog.h \
+    connectionstartdialog.h \
+    connectionstopdialog.h \
     conversion_functions.h \
     mainwindow.h \
     openwindow.h
 
 FORMS += \
+    connectionaccepteddialog.ui \
+    connectionrefuseddialog.ui \
+    connectionstartdialog.ui \
+    connectionstopdialog.ui \
     mainwindow.ui \
     openwindow.ui
 
@@ -44,7 +56,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 
-INCLUDEPATH  += /usr/include/opencv4
+INCLUDEPATH  += /usr/local/include/opencv4
 
 LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_objdetect -lopencv_imgcodecs -lopencv_videoio
 
