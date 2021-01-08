@@ -39,11 +39,12 @@ class MainWindow : public QMainWindow
                 void connectionAccepted(QString);
                 void connectionRefused(QString);
                 void connectionStopped(QString);
-     
+                
                 void on_activateClientButton_clicked();
                 void msg_box_clr();
-                
                 void on_stopClientButton_clicked();
+                
+                
                 
     private:
                  Ui::MainWindow *ui;
