@@ -1,8 +1,8 @@
-QT       += core gui
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT       += core gui multimedia
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets 
 
 CONFIG += c++11
+
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -19,6 +19,7 @@ SOURCES += \
     Tcp_Socket/TCP_SOCKET.cpp \
     VideoCall/receiver.cpp \
     VideoCall/sender.cpp \
+    VideoCall/video_funcs.cpp \
     VideoCall/videocall.cpp \
     camera_capture.cpp \
     connectionaccepteddialog.cpp \
@@ -38,6 +39,7 @@ HEADERS += \
     Udp_Socket/UDP_SOCKET.h \
     VideoCall/receiver.h \
     VideoCall/sender.h \
+    VideoCall/video_funcs.h \
     VideoCall/videocall.h \
     camera_capture.h \
     connectionaccepteddialog.h \
@@ -54,7 +56,8 @@ FORMS += \
     connectionstartdialog.ui \
     connectionstopdialog.ui \
     mainwindow.ui \
-    openwindow.ui
+    openwindow.ui \
+    videocall.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

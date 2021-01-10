@@ -3,7 +3,8 @@
 #include "FFmpeg_Headers.h"
 #include <QObject>
 namespace vc{
-
+    
+    
     class Receiver:public QObject
     {
             Q_OBJECT

@@ -142,6 +142,26 @@ void MainWindow::on_stopClientButton_clicked()
     }
 }
 
+void MainWindow::sendVideoStopMsg()
+{
+    
+}
+
+void MainWindow::sendVideoPausedMsg()
+{
+    
+}
+
+void MainWindow::sendVideoContinueMsg()
+{
+    
+}
+
+void MainWindow::sendVideoStartMsg()
+{
+    
+}
+
 void MainWindow::connectionStart(QString username, QString client_ip) {
     ConnectionStartDialog dialog(this, this->mw_tcp_socket, username, client_ip);
     dialog.setModal(true);

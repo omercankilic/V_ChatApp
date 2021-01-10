@@ -44,6 +44,12 @@ class MainWindow : public QMainWindow
                 void msg_box_clr();
                 void on_stopClientButton_clicked();
                 
+                //Video slots
+                void sendVideoStopMsg();
+                void sendVideoPausedMsg();
+                void sendVideoContinueMsg();
+                void sendVideoStartMsg();
+                
                 
                 
     private:

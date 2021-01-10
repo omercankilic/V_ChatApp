@@ -4,7 +4,7 @@
 #include <opencv4/opencv2/videoio.hpp>
 #include <opencv4/opencv2/highgui.hpp>
 #include <FFmpeg_Headers.h>
-
+#include "VideoCall/video_funcs.h"
 using namespace std;
 using namespace cv;
 
@@ -18,9 +18,12 @@ class Camera_Capture
                 int start_video_from_cam();
         private:
                 AVFormatContext *fmt_ctx        = nullptr;
-                AVDictionary *dict_ctx                  = nullptr;
+                AVCodec *codec = nullptr;
+                AVCodecContext *ctx = nullptr;
+                AVDictionary *dict_ctx          = nullptr;
                 AVInputFormat *input_format   = nullptr;
-               const char *file_name = "/dev/video0";
+                const char *file_name = "/dev/video2";
+                
                
                 int height_size;
                 int width_size;

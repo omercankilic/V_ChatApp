@@ -1,6 +1,10 @@
 #ifndef FFMPEG_HEADERS_H
 #define FFMPEG_HEADERS_H
-
+#include <iostream>
+#include <condition_variable>
+#include <mutex>
+using namespace  std;
+typedef std::pair<string,string> camera_type;
 
 extern "C"{
     #include    <libavcodec/avcodec.h>
