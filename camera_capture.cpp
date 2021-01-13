@@ -1,8 +1,7 @@
 #include "camera_capture.h"
 #include <iostream>
 #include <Helper_Functions.h>
-#include "VideoCall/video_funcs.h"
-#include "VideoCall/sender.h"
+//#include "VideoCall/sender.h"
 using namespace std;
 
 Camera_Capture::Camera_Capture()
@@ -86,20 +85,7 @@ void Camera_Capture::set_format_ctx()
     av_dump_format(this->fmt_ctx,0,this->file_name,0);
     
     AVPacket *temp_packet =av_packet_alloc();
-    cout<<"codec ctx frame rate : "<<ctx->framerate.num << "/" <<ctx->framerate.den<<endl;
-    cout<<"codec descrp : "<<ctx->codec_descriptor<<endl;
-    cout<<"codec type   : "<<ctx->codec_type<<endl;
-    cout<<ctx->height<<endl;
-    cout<<ctx->width<<endl;
-    
-    
-    //while(true){
-    //    av_read_frame(fmt_ctx,temp_packet);
-    //    cout<<"HERE"<<endl;
-    //}
-    //
-    //int a =0;
-    
+  
     while(true){
         
         // cout<< "1 : "<<setprecision(std::numeric_limits<long double>::digits10 + 1)<<get_current_time_millisecond()<<endl;
@@ -116,18 +102,9 @@ void Camera_Capture::set_format_ctx()
                 char hata[1000];
                 int a =av_strerror(ret,hata,1000);
                 cout<<hata<<endl;
-                //cout<<a<<endl;
-                //cout<<"paket ctx e gonderilemedi"<<endl;
-                //break;
             }
             if(ret==0){
                 cout<<endl<<"BASARILI"<<endl;
-                //AVFrame *temp;
-                //temp = av_frame_alloc();
-                //avcodec_receive_frame(ctx,temp);
-                //cout<<temp->height<<endl;
-                //cout<<temp->width<<endl;
-                //av_frame_free(&temp);
                 while(ret==0){
                     AVFrame *frame;
                     AVFrame *dst_frame;
@@ -141,30 +118,19 @@ void Camera_Capture::set_format_ctx()
                     }
                     cout<<"frame show"<<endl;
                     
+                    cv::Mat image;
+                    int width = frame->width;
+                    int height = frame->height;
                     
-                    ////AV_FRAME_TO_CV_MAT
-                    //struct SwsContext *av2mat_sws = NULL;
-                    //av2mat_sws = sws_getContext(ctx->width,ctx->height,ctx->pix_fmt,ctx->width,ctx->height,AV_PIX_FMT_BGR24,SWS_BICUBIC,NULL,NULL,NULL);
-                    //sws_scale(av2mat_sws,(const uint8_t * const *)src_frame->data,src_frame->linesize,0,ctx->height,dst_frame->data,dst_frame->linesize);
-                    //cout<<"pixel conversion is done"<<endl;
-                    //cv::Mat cv_frame(ctx->height,ctx->width,CV_8UC3, dst_frame->data[0], dst_frame->linesize[0]);
-                    //cv::Mat cv_frame(320,320,CV_8UC3);
-                    ////
-                    ////cout<<"frame show2"<<endl;
+                    // Allocate the opencv mat and store its stride in a 1-element array
+                    if (image.rows != height || image.cols != width || image.type() != CV_8UC3) image = cv::Mat(height, width, CV_8UC3);
+                    int cvLinesizes[1];
+                    cvLinesizes[0] = image.step1();
                     
-                      cv::Mat image;
-                      int width = frame->width;
-                      int height = frame->height;
-                  
-                      // Allocate the opencv mat and store its stride in a 1-element array
-                      if (image.rows != height || image.cols != width || image.type() != CV_8UC3) image = cv::Mat(height, width, CV_8UC3);
-                      int cvLinesizes[1];
-                      cvLinesizes[0] = image.step1();
-                  
-                      // Convert the colour format and write directly to the opencv matrix
-                      SwsContext* conversion = sws_getContext(width, height, (AVPixelFormat) frame->format, width, height, AVPixelFormat::AV_PIX_FMT_BGR24, SWS_FAST_BILINEAR, NULL, NULL, NULL);
-                      sws_scale(conversion, frame->data, frame->linesize, 0, height, &image.data, cvLinesizes);
-                      sws_freeContext(conversion);
+                    // Convert the colour format and write directly to the opencv matrix
+                    SwsContext* conversion = sws_getContext(width, height, (AVPixelFormat) frame->format, width, height, AVPixelFormat::AV_PIX_FMT_BGR24, SWS_FAST_BILINEAR, NULL, NULL, NULL);
+                    sws_scale(conversion, frame->data, frame->linesize, 0, height, &image.data, cvLinesizes);
+                    sws_freeContext(conversion);
                     
                     cv::imshow("title",image);
                     cv::waitKey(1);
@@ -173,10 +139,7 @@ void Camera_Capture::set_format_ctx()
                 }
             }
         }
-        // cout<<"2 : "<< setprecision(std::numeric_limits<long double>::digits10 + 1)<<get_current_time_millisecond()<<endl;
-        //cout<<"temp packet size : "<<temp_packet->size<<endl; 
-        
-        
+
     }
     
     

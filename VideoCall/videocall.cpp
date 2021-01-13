@@ -22,6 +22,7 @@ int VideoCall::detect_cameras()
         c_type.first = cameraInfo.description().toStdString();
         c_type.second= cameraInfo.deviceName().toStdString();
         available_cameras.push_back(c_type);
+        cout<<"c_type.first : "<<c_type.first<< " c_type.second : "<<c_type.second<<endl;
     }
     return cameras.size();
 }

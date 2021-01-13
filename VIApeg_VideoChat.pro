@@ -66,7 +66,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 
 INCLUDEPATH  += /usr/include/opencv4
+INCLUDEPATH += /home/mrcan/ffmpeg_build/include
 
 LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_objdetect -lopencv_imgcodecs -lopencv_videoio
 
 LIBS +=-L/usr/local/lib -lavdevice -lm -lxcb -lxcb-shm -lxcb -lxcb  -lxcb-render  -lxcb  -lavfilter -pthread -lm  -ldl -lswscale -lm -lavformat -lz -lavcodec -pthread -lm -llzma -lz  -ldl -lswresample -lm -lavutil -pthread  -lX11 -lm -ldl
+
+
+

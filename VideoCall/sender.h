@@ -22,7 +22,7 @@ namespace vc{
             Sender(string target_url,string target_port,camera_type active_cam);
             friend class VideoCall;
             
-       private:
+      // private:
             
             int exit_flag = false;
             //FFmpeg parameters
@@ -34,6 +34,7 @@ namespace vc{
             AVCodec *out_codec;
             AVCodecContext *out_codec_ctx;
             AVFormatContext *out_format_ctx;
+            AVIOContext     *output_io_context;
             int audio_stream_index;
             int video_stream_index;
             
@@ -58,6 +59,16 @@ namespace vc{
             bool is_paused = false;
             condition_variable cv_pause;
             mutex cv_pause_mut;
+            
+            int start_encoding(AVFrame *frame, AVPacket *pkt);
+            int set_encoder();
+            AVCodec *encoder;
+            AVCodecContext *encoder_ctx;
+            
+            
+            AVCodec  *decoder;
+            AVCodecContext *decoder_ctx;
+            int set_decoder();
         signals:
             void video_paused();
             void video_stop();
@@ -67,3 +78,8 @@ namespace vc{
 }
 
 #endif // SENDER_H
+
+
+
+//LIBS +=-L/home/mrcan/ffmpeg_build/lib -lavdevice -lm -lxcb -lxcb-shm -lxcb -lxcb  -lxcb-render  -lxcb  -lavfilter -pthread -lm  -ldl -lswscale -lm -lavformat -lz -lavcodec -pthread -lm -llzma -lz  -ldl -lswresample -lm -lavutil -pthread  -lX11 -lm -ldl
+//

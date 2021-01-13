@@ -12,12 +12,18 @@ namespace vc{
             
             friend class VideoCall;
         protected:
+            
+            
+            
+            
             Receiver();
             void create_decoder();
             void start_reading();
             void pause_reading();
             void stop_reading();
             void start_recording();
+            
+            
             
             
     };
