@@ -39,13 +39,13 @@ namespace Chat {
 
         while (true) {
             // recv(server_sockfd, tempdata, 30, 0);
-            received_size = recvfrom(server_sockfd, tempdata, 30, 0, (struct sockaddr *)&client_addr, &len);
+            received_size = recvfrom(server_sockfd, tempdata, 20000, 0, (struct sockaddr *)&client_addr, &len);
             char client_ip[16];
             inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, 16);
         }
     }
 
-    void Udp_Socket::send_message(std::string ip, std::string msg) {
+    void Udp_Socket::send_message(std::string ip, VideoMessagePacket pkt) {
         int sockfd;
         struct sockaddr_in servaddr;
 
@@ -59,8 +59,11 @@ namespace Chat {
         if(inet_pton(AF_INET, ip.c_str(), &servaddr.sin_addr)<=0){
             std::cout << "Can not inet_pton." << std::endl;
         }
-
-        sendto(sockfd, msg.c_str(), 30, 0, (const struct sockaddr *) &servaddr, sizeof(servaddr));
+        char *data2send;
+        data2send = new char[30];
+        data2send[1]= 'a';
+                
+        sendto(sockfd, data2send, 30, 0, (const struct sockaddr *) &servaddr, sizeof(servaddr));
         close(sockfd);
     }
 

@@ -12,6 +12,7 @@
 #include <MessagePacket.h>
 #include <ActiveClients/Active_Clients.h>
 #include <QObject>
+#include "VideoCall/videomessagepacket.h"
 
 namespace Chat{
 
@@ -23,14 +24,14 @@ namespace Chat{
                     Udp_Socket(std::string ip_addr,Active_Clients *act_c);
                     void create_socket();
                     void socket_listen();
-                    void send_message(std::string ip, std::string msg);
+                    void send_message(std::string ip, VideoMessagePacket pkt);
 
 
                 private:
 
                     struct sockaddr_in server_addr, client_addr;
                     int server_sockfd;
-                    uint16_t port_number = 23000;
+                    int port_number = 23000;
                     char *ip_assigned = nullptr;
                     Active_Clients *act_clients;
                     std::thread *udp_listen_th;

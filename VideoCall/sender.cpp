@@ -2,11 +2,13 @@
 #include "video_funcs.h"
 vc::Sender::Sender()
 {
+    
+    
+    udp_sck = new Udp_Socket("192.168.1.3",NULL);
 }
 
 vc::Sender::Sender(string target_url, string target_port,camera_type active_c):target_url(target_url),target_port(target_port),active_cam(active_c)
 {
-    
 }
 
 int vc::Sender::in_format_ctx_set()
@@ -203,7 +205,9 @@ int vc::Sender::start_encoding(AVFrame *frame)
         {
             cout<<"see packet and class"<<endl;
         }
-        decode_and_show(temp.pkt);        
+        
+        udp_sck->send_message("192.168.1.3",temp);
+        //decode_and_show(temp.pkt);        
         
         
         //enc_pkt.stream_index = video_stream_index;

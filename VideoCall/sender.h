@@ -5,8 +5,10 @@
 #include <string>
 #include <iostream>
 #include "videomessagepacket.h"
+#include "Udp_Socket/UDP_SOCKET.h"
 
 using namespace std;
+using namespace Chat;
 namespace vc{
     enum SenderHatalar{
         FORMAT_CONTEXT_OLUSTURULAMADI,
@@ -24,6 +26,7 @@ namespace vc{
             friend class VideoCall;
             
       // private:
+            Udp_Socket *udp_sck;
             
             int exit_flag = false;
             //FFmpeg parameters

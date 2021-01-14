@@ -4,6 +4,7 @@
 #include "camera_capture.h"
 #include "VideoCall/sender.h"
 #include "VideoCall/videocall.h"
+#include "Udp_Socket/UDP_SOCKET.h"
 using namespace vc;
 
 
