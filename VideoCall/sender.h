@@ -4,6 +4,7 @@
 #include <QObject>
 #include <string>
 #include <iostream>
+#include "videomessagepacket.h"
 
 using namespace std;
 namespace vc{
@@ -35,6 +36,7 @@ namespace vc{
             AVCodecContext *out_codec_ctx;
             AVFormatContext *out_format_ctx;
             AVIOContext     *output_io_context;
+            
             int audio_stream_index;
             int video_stream_index;
             
@@ -47,10 +49,12 @@ namespace vc{
             //sender parameters
             camera_type active_cam;
             
+            //invalid
+            int out_format_ctx_set();
             
             //ffmpeg functions
+            int output_format_ctx_set(string url);
             int in_format_ctx_set();
-            int out_format_ctx_set();
             int encode_and_send(AVFrame* in_frame);
             int start_sending();
             int pause_sending();
@@ -60,7 +64,8 @@ namespace vc{
             condition_variable cv_pause;
             mutex cv_pause_mut;
             
-            int start_encoding(AVFrame *frame, AVPacket *pkt);
+            
+            int start_encoding(AVFrame *frame);
             int set_encoder();
             AVCodec *encoder;
             AVCodecContext *encoder_ctx;
@@ -69,6 +74,8 @@ namespace vc{
             AVCodec  *decoder;
             AVCodecContext *decoder_ctx;
             int set_decoder();
+            int decode_and_show(AVPacket enc_pkt);
+            
         signals:
             void video_paused();
             void video_stop();

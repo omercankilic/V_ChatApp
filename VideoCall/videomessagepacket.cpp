@@ -1,6 +1,6 @@
 #include "videomessagepacket.h"
 
-VideoMessagePacket::VideoMessagePacket()
+VideoMessagePacket::VideoMessagePacket(AVPacket enc_pkt)
 {
-    
+    pkt = enc_pkt;
 }

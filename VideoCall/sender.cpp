@@ -15,7 +15,7 @@ int vc::Sender::in_format_ctx_set()
     avdevice_register_all();
     
     s_format_ctx = avformat_alloc_context();
-    if (avformat_open_input(&s_format_ctx, "/dev/video2",NULL, NULL) < 0) {
+    if (avformat_open_input(&s_format_ctx, "/dev/video0",NULL, NULL) < 0) {
         cout<<"FORMAT CONTEXT OLUSTURULAMADI"<<endl;
         return FORMAT_CONTEXT_OLUSTURULAMADI;
     }
@@ -69,127 +69,54 @@ int vc::Sender::in_format_ctx_set()
     
 }
 
-int vc::Sender::out_format_ctx_set(){
-    int ret;
-    const char *o_file_name = "udp://127.0.0.1:12345";
+int vc::Sender::output_format_ctx_set(std::string url){
     
-    ret =avformat_alloc_output_context2(&out_format_ctx,NULL,"mpeg2video",o_file_name);
-    if(ret < 0){
-        cout<<"Output format context could not be created"<<endl;
-        show_error(ret);
-        return -1;
-    }
-    
+    int ret = 0;
     AVStream *out_stream;
-    
-    out_stream = avformat_new_stream(out_format_ctx,NULL);
-    if(!out_stream){
-        cout<<"Output stream could not be created"<<endl;
+    AVStream *in_stream;
+    out_format_ctx = NULL;
+    avformat_alloc_output_context2(&out_format_ctx,NULL,"mpegts",url.c_str());
+    if(out_format_ctx == NULL){
+        cout<<"out_format_ctx can not be allocated"<<endl;
         return -1;
     }
-    
-    out_codec = avcodec_find_encoder_by_name("mpeg2video");
-    if(NULL == out_codec){
-        cout<<"out encoder could not be found"<<endl;
-        return -1;
-    }
-    out_codec_ctx = avcodec_alloc_context3(out_codec);
-    if(out_codec_ctx == NULL){
-        cout<<"Could not allocate video encoder context"<<endl;
-        return -2;
-    }
-    out_codec_ctx->max_b_frames = 0;
-    out_codec_ctx->width  = s_codec_ctx->width;
-    out_codec_ctx->height = s_codec_ctx->height;
-    
-    out_codec_ctx->bit_rate = 4000000;
-    out_codec_ctx->max_b_frames = 0;
-    out_codec_ctx->gop_size = 10;
-    out_codec_ctx->time_base = AVRational{1,30};
-    out_codec_ctx->framerate = AVRational{30,1};
-    out_codec_ctx->pix_fmt   =AV_PIX_FMT_YUV420P;
-    
-    ret = avcodec_open2(out_codec_ctx,out_codec,NULL);
-    if(ret){
-        cout<<"out_codec_ctx could not be created "<<endl;
-        show_error(ret);
-        return -1;
-    }
-    
-    ret =avcodec_parameters_from_context(out_format_ctx->streams[video_stream_index]->codecpar,out_codec_ctx);
-    if(ret<0){
-        cout<<"failed to copy encoder parameters to output stream"<<endl;
-    }
-    
-    if(out_format_ctx->oformat->flags & AVFMT_GLOBALHEADER){
-        out_codec_ctx->flags |=AV_CODEC_FLAG_GLOBAL_HEADER;
+    for(int i =0; i< s_format_ctx->nb_streams;i++){
         
-    }
-
-    
-    av_dump_format(out_format_ctx,video_stream_index,o_file_name,1);
-    if (!(out_format_ctx->oformat->flags & AVFMT_NOFILE)) {
-        ret = avio_open(&out_format_ctx->pb, o_file_name, 0);
-        
-        if(ret<0){
-            cout<<"output stream could not be started"<<endl;
-            return -1;
+        out_stream = avformat_new_stream(out_format_ctx,NULL);
+        if(out_stream == NULL){
+            cout<<"out stream olusturulamadi"<<endl;
+            return -2;
         }
+        in_stream = s_format_ctx->streams[i];
+        if(in_stream->id == AVMEDIA_TYPE_VIDEO){
+            cout<<"ENCODER OLUSTURULUYOR"<<endl;
+            ret = set_encoder();
+            if(ret!=0){
+                return -3;
+            }
+            
+            if (out_format_ctx->oformat->flags & AVFMT_GLOBALHEADER){
+                encoder_ctx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
+            }
+            
+            ret = avcodec_parameters_from_context(out_stream->codecpar,encoder_ctx);
+            if(ret <0){
+                cout<<"codec parametreleri streame gecirilemedi"<<endl;
+                show_error(ret);
+                return ret;
+            }
+            out_stream->time_base = encoder_ctx->time_base;
+        }   
     }
+    av_dump_format(out_format_ctx,0,url.c_str(),1);
+    
     ret = avformat_write_header(out_format_ctx,NULL);
     if(ret<0){
-        return show_error(ret);
-    }
-    
-    return 1;
-}
-static int a = 1;
-int vc::Sender::encode_and_send(AVFrame *frame)
-{
-    int ret;
-    //AVFrame *p_frame;
-    //p_frame = av_frame_alloc();
-    //int width = frame->width;
-    //int height= frame->height;
-    //SwsContext* conversion = sws_getContext(width, height, (AVPixelFormat) frame->format, 704, 576, AVPixelFormat::AV_PIX_FMT_YUV420P, SWS_FAST_BILINEAR, NULL, NULL, NULL);
-    //avcodec_align_dimensions2(out_codec_ctx,&frame->width,&frame->height,p_frame->linesize);
-    //
-    //sws_scale(conversion, frame->data, frame->linesize, 0, height,(p_frame->data), p_frame->linesize);
-    
-    
-    ret = avcodec_send_frame(out_codec_ctx,frame);
-    if(ret <0){
-        cout<<"frame i encoder gonderme hatasi"<<endl;
+        cout<<"format header yazilamadi"<<endl;
         show_error(ret);
-        return -1;
+        return ret;
     }
-    av_frame_free(&frame);
-    cout<<"encodera gitti"<<endl;
-    AVPacket *av_pkt;
-    av_pkt = av_packet_alloc();
-    while(ret==0){
-        ret =avcodec_receive_packet(out_codec_ctx,av_pkt);
-        cout<<"a: " <<a<<endl;;
-        a++;
-        if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF){
-            cout<<"AVERROR EAGAIN OR EOF HATASI"<<endl;   
-            show_error(ret);
-            break;
-        }
-        
-        //av_packet_rescale_ts(av_pkt, out_codec_ctx->time_base, out_format_ctx->streams[video_stream_index]->time_base);
-        
-        av_pkt->stream_index = video_stream_index;
-        
-        ret = av_write_frame(out_format_ctx,av_pkt);
-        if(ret<0){
-            show_error(ret);
-        }
-        cout<<"av_pkt pts and dts : "<<(av_pkt->pts)/1000<<" "<<(av_pkt->dts)/1000<<endl;
-    
-        
-    }
-    av_packet_free(&av_pkt);
+    return 0;
     
 }
 
@@ -224,17 +151,8 @@ int vc::Sender::start_sending()
                         av_frame_free(&temp_frame);
                         break;
                     }else{
-                        //cv::Mat temp_m;
-                        //cout<<"frame size : "<<temp_frame->pkt_size<<endl;
-                        //avframeToMat(temp_frame,temp_m);
-                        //////cout<<temp_m.
-                        //cv::imshow("title",temp_m);
-                        //cv::waitKey(1);
                         //encode_and_send(temp_frame);
-                        AVPacket *t_pkt;
-                        t_pkt = av_packet_alloc();
-                        start_encoding(temp_frame,t_pkt);
-                        //av_packet_free(&t_pkt);
+                        start_encoding(temp_frame);
                     }
                     //av_frame_free(&temp_frame);
                     
@@ -247,7 +165,7 @@ int vc::Sender::start_sending()
     return 1;
 }
 
-int vc::Sender::start_encoding(AVFrame *frame,AVPacket *pkt)
+int vc::Sender::start_encoding(AVFrame *frame)
 {
     int ret;int ret2;
     
@@ -260,9 +178,14 @@ int vc::Sender::start_encoding(AVFrame *frame,AVPacket *pkt)
         cout<<"line 252"<<endl;
         return -4;
     }
+    
+    AVPacket enc_pkt;
+    enc_pkt.data = NULL;
+    enc_pkt.size = 0;
+    av_init_packet(&enc_pkt);
     while(ret >=0){
         
-        ret = avcodec_receive_packet(encoder_ctx,pkt);
+        ret = avcodec_receive_packet(encoder_ctx,&enc_pkt);
         if(ret == AVERROR(EAGAIN) || ret == AVERROR_EOF){
             show_error(ret);
             return -5;
@@ -271,47 +194,43 @@ int vc::Sender::start_encoding(AVFrame *frame,AVPacket *pkt)
             cout<<"ERROR IN ENCODING LINE 259"<<endl;
             return -6;
         }
-        //cout<< "BASARILI ENCODE ISLEMI at "<<setprecision(10)<<get_current_time_millisecond()<<endl;
-        cout<<"encoded packet size : "<<pkt->size<< endl;
         
-        ret2 = avcodec_send_packet(decoder_ctx,pkt);
-        if(ret2== AVERROR(EAGAIN)||ret2 == AVERROR_EOF){
-            show_error(ret2);
-            return -7;
-        }else if(ret<0){
-            show_error(ret2);
-            cout<<"ERROR IN DECODING ENCODED PACKET"<<endl;
-            return -8;
-        }
-        if(ret2==0){
-            AVFrame *decoded_frame;
-            decoded_frame = av_frame_alloc();
-            
-            while(true){
-                if(avcodec_receive_frame(decoder_ctx,decoded_frame) != 0){
-                    av_frame_free(&decoded_frame);
-                    break;
-                }else{
-                 
-                    cv::Mat temp_m;
-                    cout<<"frame size : "<<decoded_frame->pkt_size<<endl;
-                    avframeToMat(decoded_frame,temp_m);
-                    cv::imshow("decoded frame",temp_m);
-                    cv::waitKey(1);
-                }
-            }
+        cout<< "BASARILI ENCODE ISLEMI at "<<setprecision(10)<<get_current_time_millisecond()<<endl;
+        //cout<<"encoded packet size : "<<enc_pkt.size<< endl;
         
+        VideoMessagePacket temp(enc_pkt);
+        
+        {
+            cout<<"see packet and class"<<endl;
         }
+        decode_and_show(temp.pkt);        
+        
+        
+        //enc_pkt.stream_index = video_stream_index;
+        ////av_packet_rescale_ts(&enc_pkt,encoder_ctx->time_base,out_format_ctx->streams[video_stream_index]->time_base);
+        //AVPacket temp;
+        //temp.data =NULL;
+        //temp.size = 0;
+        //av_init_packet(&temp);
+        //temp.stream_index = video_stream_index;
+        //ret = av_interleaved_write_frame(out_format_ctx,&temp);
+        //if(ret == 0){
+        //    cout<<"paket basariyla gonderildi"<<endl;
+        //}else{
+        //    show_error(ret);
+        //    cout<<"paket gonderme hatasi"<<endl;
+        //}
         
     }
     
+    return 0;
 }
 
 int vc::Sender::set_encoder()
 {
     int ret;
     avdevice_register_all();
-    encoder = avcodec_find_encoder(AV_CODEC_ID_MPEG4);// _by_name("mpeg1video");
+    encoder = avcodec_find_encoder(AV_CODEC_ID_MPEG4);
     if(encoder == NULL){
         cout<<"encoder can not be found"<<endl;
         return -1;
@@ -326,8 +245,8 @@ int vc::Sender::set_encoder()
     encoder_ctx->bit_rate = 400000;
     encoder_ctx->width    = s_codec_ctx->width;
     encoder_ctx->height   = s_codec_ctx->coded_height;
-    encoder_ctx->time_base= AVRational{1, 30};
-    encoder_ctx->framerate= AVRational{30, 1};
+    encoder_ctx->time_base= s_codec_ctx->time_base;
+    encoder_ctx->framerate= s_codec_ctx->framerate;
     
     encoder_ctx->gop_size     = 10;
     encoder_ctx->max_b_frames = 1;
@@ -341,6 +260,7 @@ int vc::Sender::set_encoder()
         show_error(ret);
         return -3;
     }
+    return 0;
 }
 
 int vc::Sender::set_decoder()
@@ -360,17 +280,6 @@ int vc::Sender::set_decoder()
         return -2;
     }
     
-    // decoder parameters setting
-    //encoder_ctx->bit_rate = 400000;
-    //encoder_ctx->width    = s_codec_ctx->width;
-    //encoder_ctx->height   = s_codec_ctx->coded_height;
-    //encoder_ctx->time_base= AVRational{1, 30};
-    //encoder_ctx->framerate= AVRational{30, 1};
-    //
-    //encoder_ctx->gop_size     = 10;
-    //encoder_ctx->max_b_frames = 1;
-    //encoder_ctx->pix_fmt      = AV_PIX_FMT_YUV420P;
-    
     decoder_ctx->bit_rate = 400000;
     decoder_ctx->width    = encoder_ctx->width;
     decoder_ctx->height   = encoder_ctx->height;
@@ -387,6 +296,41 @@ int vc::Sender::set_decoder()
         show_error(ret);
         cout<<"decoder acma hatasi"<<endl;
         return -3;
+    }
+    
+}
+
+int vc::Sender::decode_and_show(AVPacket enc_pkt)
+{
+    int ret2 = 0;
+    ret2 = avcodec_send_packet(decoder_ctx,&enc_pkt);
+    if(ret2== AVERROR(EAGAIN)||ret2 == AVERROR_EOF){
+        show_error(ret2);
+        return -7;
+    }else if(ret2<0){
+        show_error(ret2);
+        cout<<"ERROR IN DECODING ENCODED PACKET"<<endl;
+        return -8;
+    }
+    if(ret2==0){
+        AVFrame *decoded_frame;
+        decoded_frame = av_frame_alloc();
+        
+        while(true){
+            if(avcodec_receive_frame(decoder_ctx,decoded_frame) != 0){
+                av_frame_free(&decoded_frame);
+                break;
+            }else{
+                
+                cv::Mat temp_m;
+                cout<<"frame size : "<<decoded_frame->pkt_size<<endl;
+                avframeToMat(decoded_frame,temp_m);
+                cv::imshow("decoded frame",temp_m);
+                cv::waitKey(1);
+            }
+        }
+        av_frame_free(&decoded_frame);
+        
     }
     
 }

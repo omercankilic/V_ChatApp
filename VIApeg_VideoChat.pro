@@ -17,11 +17,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     Tcp_Socket/TCP_SOCKET.cpp \
-    UDP_SOCKET.cpp \
+    Udp_Socket/UDP_SOCKET.cpp \
     VideoCall/receiver.cpp \
     VideoCall/sender.cpp \
     VideoCall/video_funcs.cpp \
     VideoCall/videocall.cpp \
+    VideoCall/videomessagepacket.cpp \
     camera_capture.cpp \
     connectionnotificationdialog.cpp \
     connectionstartdialog.cpp \
@@ -40,6 +41,7 @@ HEADERS += \
     VideoCall/sender.h \
     VideoCall/video_funcs.h \
     VideoCall/videocall.h \
+    VideoCall/videomessagepacket.h \
     camera_capture.h \
     connectionnotificationdialog.h \
     connectionstartdialog.h \
@@ -60,8 +62,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 
-INCLUDEPATH  += /usr/local/include/opencv4
-INCLUDEPATH += /home/melih/ffmpeg_build/include
+INCLUDEPATH  += /usr/include/opencv4
+INCLUDEPATH += /home/mrcan/ffmpeg_build/include
 
 LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_objdetect -lopencv_imgcodecs -lopencv_videoio
 
