@@ -8,10 +8,8 @@
 #include <thread>
 #include <condition_variable>
 #include <QListWidgetItem>
-#include "connectionaccepteddialog.h"
-#include "connectionrefuseddialog.h"
 #include "connectionstartdialog.h"
-#include "connectionstopdialog.h"
+#include "connectionnotificationdialog.h"
 
 using namespace Chat;
 
@@ -36,9 +34,7 @@ class MainWindow : public QMainWindow
                 void msg_message_onl(QString);
                 void msg_message_rcv(QString);
                 void connectionStart(QString, QString);
-                void connectionAccepted(QString);
-                void connectionRefused(QString);
-                void connectionStopped(QString);
+                void connectionNotification(QString);
                 
                 void on_activateClientButton_clicked();
                 void msg_box_clr();
