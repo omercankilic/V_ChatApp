@@ -64,9 +64,7 @@ namespace Chat {
             void new_msg_online (QString);
             void new_msg_accepted_clr();
             void connectionStart(QString, QString);
-            void connectionRefused(QString);
-            void connectionAccepted(QString);
-            void connectionStopped(QString);
+            void connectionNotification(QString);
             
         public:
             std::vector<std::string> message;

@@ -20,9 +20,7 @@ MainWindow::MainWindow(QWidget *parent,std::string ip_n,std::string user_n)
          connect(this->mw_tcp_socket,&Tcp_Socket::new_msg_online,this,&MainWindow::msg_message_onl);
          connect(this->mw_tcp_socket,&Tcp_Socket::new_msg_accepted_clr,this,&MainWindow::msg_box_clr);
          connect(this->mw_tcp_socket,&Tcp_Socket::connectionStart,this,&MainWindow::connectionStart);
-         connect(this->mw_tcp_socket,&Tcp_Socket::connectionAccepted,this,&MainWindow::connectionAccepted);
-         connect(this->mw_tcp_socket,&Tcp_Socket::connectionRefused,this,&MainWindow::connectionRefused);
-         connect(this->mw_tcp_socket,&Tcp_Socket::connectionStopped,this,&MainWindow::connectionStopped);
+         connect(this->mw_tcp_socket,&Tcp_Socket::connectionNotification,this,&MainWindow::connectionNotification);
 }
 
 MainWindow::~MainWindow()
@@ -163,22 +161,13 @@ void MainWindow::sendVideoStartMsg()
 }
 
 void MainWindow::connectionStart(QString username, QString client_ip) {
-    ConnectionStartDialog dialog(this, this->mw_tcp_socket, username, client_ip);
-    dialog.setModal(true);
-    dialog.exec();
+    ConnectionStartDialog *dialog = new ConnectionStartDialog(this, this->mw_tcp_socket, username, client_ip, &mw_act_clients);
+//    Qt::WindowFlags flags = dialog->windowFlags();
+//    dialog->setWindowFlags(flags | Qt::Tool);
+//    dialog->setWindowModality(Qt::NonModal);
+    dialog->show();
 }
-void MainWindow::connectionAccepted(QString username) {
-    ConnectionAcceptedDialog dialog(this, username);
-    dialog.setModal(true);
-    dialog.exec();
-}
-void MainWindow::connectionRefused(QString username) {
-    ConnectionRefusedDialog dialog(this, username);
-    dialog.setModal(true);
-    dialog.exec();
-}
-void MainWindow::connectionStopped(QString username) {
-    ConnectionStopDialog dialog(this, username);
-    dialog.setModal(true);
-    dialog.exec();
+void MainWindow::connectionNotification(QString notification) {
+    connectionNotificationDialog *dialog = new connectionNotificationDialog(this, notification);
+    dialog->show();
 }

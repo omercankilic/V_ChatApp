@@ -69,11 +69,7 @@ namespace Chat{
                 res = temp_message_packet->connection_manipulation();
                 if(res == CONNECTION_START){
                     if(is_connected == false){
-                        std::string temp_name(temp_message_packet->packet_raw_data);
-                        act_clients->active_client_sockfd = temp_client_sockfd;
-                        act_clients->active_client_ip_addr = std::string(client_ip);
-                        act_clients->active_client_host_name = temp_name;
-                        is_connected = true;
+
                         emit connectionStart((QString)temp_message_packet->packet_raw_data, client_ip);
                         //is_accepted_f(temp_message_packet->packet_raw_data,temp_client_addr);
                         //close(temp_client_sockfd);
@@ -93,7 +89,7 @@ namespace Chat{
                         //    close(temp_client_sockfd);
                         //}
                     }else{
-                        send_message(ip_assigned, client_ip, CONNECTION_REFUSED);
+                        send_message(this->user_name, client_ip, CONNECTION_REFUSED);
                         //send_message(ip_assigned, client_ip, CONNECTION_REFUSED);
                         //close(temp_client_sockfd);
                     }
@@ -107,7 +103,7 @@ namespace Chat{
                         is_connected = false;
                         act_clients->active_client_ip_addr  ="";
                         act_clients->active_client_host_name= "";
-                        emit connectionStopped((QString)temp_message_packet->packet_raw_data);
+                        emit connectionNotification((QString)temp_message_packet->packet_raw_data + " stopped connection.");
                     }
                     close(temp_client_sockfd);
                 }else if(res == CONNECTION_MESSAGE){
@@ -147,7 +143,7 @@ namespace Chat{
                         this->act_clients->active_client_ip_addr   = client_ip;
                         is_connected = true;
                         
-                        emit connectionAccepted((QString)temp_message_packet->packet_raw_data);
+                        emit connectionNotification((QString)temp_message_packet->packet_raw_data + " accepted your connection request.");
                         //std::thread *t_info_thread = new std::thread([=](){
                         //    QMessageBox msg_box;
                         //    QString info_msg = (QString)temp_message_packet->packet_raw_data+" accepted your connection request :) ";
@@ -163,7 +159,7 @@ namespace Chat{
                     }
                     close(temp_client_sockfd);
                 }else if(res == (uint8_t)CONNECTION_REFUSED){
-                    emit connectionRefused((QString)temp_message_packet->packet_raw_data);
+                    emit connectionNotification((QString)temp_message_packet->packet_raw_data + " refused your connection request.");
                     //std::thread *t_info_thread = new std::thread([=](){
                     //    QMessageBox msg_box;
                     //    QString info_msg = (QString)temp_message_packet->packet_raw_data+" REFUSED your connection request :( ";
@@ -203,7 +199,7 @@ namespace Chat{
 
             char ip[16];
             strcpy(ip, discover_ip_list.at(i).c_str());
-            if(inet_pton(AF_INET,ip,&client_to.sin_addr)<=0){
+            if(inet_pton(AF_INET,discover_ip_list.at(i).c_str(),&client_to.sin_addr)<=0){
                 std::cout<<"Can not inet_pton : "<<discover_ip_list.at(i)<<std::endl;
             }
 
@@ -230,6 +226,7 @@ namespace Chat{
                     char *packet = reinterpret_cast<char*>(temp_packet);
                     send(temp_sock,packet,3007,0);
                     delete temp_packet;
+//                    send_message(this->user_name, discover_ip_list.at(i), CONNECTION_ONLINE);
                 }
             }
 

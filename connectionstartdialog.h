@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <Tcp_Socket/TCP_SOCKET.h>
+#include <ActiveClients/Active_Clients.h>
 
 using namespace Chat;
 
@@ -15,7 +16,7 @@ class ConnectionStartDialog : public QDialog
     Q_OBJECT
 
 public:
-    ConnectionStartDialog(QWidget *parent = nullptr, Tcp_Socket *tcp = nullptr, QString username ="", QString client_ip = "");
+    ConnectionStartDialog(QWidget *parent = nullptr, Tcp_Socket *tcp = nullptr, QString username ="", QString client_ip = "", Active_Clients *act_client = nullptr);
     ~ConnectionStartDialog();
 
 private slots:
@@ -26,6 +27,7 @@ private slots:
 private:
     Ui::ConnectionStartDialog *ui;
     Tcp_Socket *tcp;
+    Active_Clients *act_client;
     std::string client_ip;
     std::string username;
 };

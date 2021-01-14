@@ -48,8 +48,11 @@ HEADERS += \
     openwindow.h 
 
 FORMS += \
+    connectionaccepteddialog.ui \
     connectionnotificationdialog.ui \
+    connectionrefuseddialog.ui \
     connectionstartdialog.ui \
+    connectionstopdialog.ui \
     mainwindow.ui \
     openwindow.ui \
     videocall.ui
