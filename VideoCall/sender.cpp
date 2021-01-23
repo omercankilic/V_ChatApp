@@ -4,7 +4,7 @@ vc::Sender::Sender()
 {
     
     
-    udp_sck = new Udp_Socket("192.168.1.3",NULL);
+    udp_sck = new Udp_Socket("192.168.1.6",NULL);
 }
 
 vc::Sender::Sender(string target_url, string target_port,camera_type active_c):target_url(target_url),target_port(target_port),active_cam(active_c)
@@ -68,7 +68,7 @@ int vc::Sender::in_format_ctx_set()
     }
     av_dump_format(this->s_format_ctx,video_stream_index,this->file_name.data(),0);
     return 1;
-    
+
 }
 
 int vc::Sender::output_format_ctx_set(std::string url){
@@ -198,32 +198,11 @@ int vc::Sender::start_encoding(AVFrame *frame)
         }
         
         cout<< "BASARILI ENCODE ISLEMI at "<<setprecision(10)<<get_current_time_millisecond()<<endl;
-        //cout<<"encoded packet size : "<<enc_pkt.size<< endl;
-        
-        VideoMessagePacket temp(enc_pkt);
-        
-        {
-            cout<<"see packet and class"<<endl;
-        }
-        
-        udp_sck->send_message("192.168.1.3",temp);
-        //decode_and_show(temp.pkt);        
+        //cout<<"encoded     packet size : "<<enc_pkt.size<< endl;
         
         
-        //enc_pkt.stream_index = video_stream_index;
-        ////av_packet_rescale_ts(&enc_pkt,encoder_ctx->time_base,out_format_ctx->streams[video_stream_index]->time_base);
-        //AVPacket temp;
-        //temp.data =NULL;
-        //temp.size = 0;
-        //av_init_packet(&temp);
-        //temp.stream_index = video_stream_index;
-        //ret = av_interleaved_write_frame(out_format_ctx,&temp);
-        //if(ret == 0){
-        //    cout<<"paket basariyla gonderildi"<<endl;
-        //}else{
-        //    show_error(ret);
-        //    cout<<"paket gonderme hatasi"<<endl;
-        //}
+        prepare_and_send_data(enc_pkt);
+ 
         
     }
     
@@ -336,5 +315,16 @@ int vc::Sender::decode_and_show(AVPacket enc_pkt)
         av_frame_free(&decoded_frame);
         
     }
+    
+}
+
+int vc::Sender::prepare_and_send_data(AVPacket &pkt)
+{
+    uint8_t raw_data[pkt.size];
+    memcpy(raw_data,pkt.data,pkt.size);
+    
+    AVPacket temp;
+    av_packet_from_data(&temp,raw_data,pkt.size);
+    //decode_and_show(temp);
     
 }

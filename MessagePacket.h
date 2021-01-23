@@ -14,6 +14,8 @@ namespace Chat {
         CONNECTION_ACCEPT,
         CONNECTION_REFUSED,
         CONNECTION_RESPOND,
+        CONNECTION_VIDEO_START,
+        CONNECTION_VIDEO_PACKET,
         UNDEFINED,
     };
     

@@ -13,6 +13,8 @@ class VideoMessagePacket
         int packet_size          = 0;
         AVPacket pkt;
         
+        
+        
 };
 
 #endif // VIDEOMESSAGEPACKET_H

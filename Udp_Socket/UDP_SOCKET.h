@@ -19,22 +19,33 @@ namespace Chat{
         class Udp_Socket: public QObject{
 
                     Q_OBJECT
-
+    
+            signals:
+                void new_msg_online (QString);
+                void udp_respond_signal(QString);
+                
                 public:
-                    Udp_Socket(std::string ip_addr,Active_Clients *act_c);
-                    void create_socket();
+                    Udp_Socket(std::string ip_addr,Active_Clients *act_c,std::string usr_name);
+                    void packet_listen();
                     void socket_listen();
-                    void send_message(std::string ip, VideoMessagePacket pkt);
+                    void send_message(std::string ip, uint8_t pkt[]);
+                   
+                    int broadcast_listen();
+                    int send_discover_msg();
+                    int send_respond_msg(char target_ip[]);
 
 
                 private:
 
-                    struct sockaddr_in server_addr, client_addr;
-                    int server_sockfd;
                     int port_number = 23000;
                     char *ip_assigned = nullptr;
                     Active_Clients *act_clients;
                     std::thread *udp_listen_th;
+                    std::thread *udp_listen_broadcast_th;
+                    char broadcast_ip[15] = "192.168.1.255";
+                    std::string usr_name;
+                    
+                    
 
 
         };

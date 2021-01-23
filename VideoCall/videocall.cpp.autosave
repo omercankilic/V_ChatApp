@@ -38,6 +38,8 @@ int VideoCall::video_stop()
 int VideoCall::video_start()
 {
     //Create sender and receiver for video 
+    vc_sender = new Sender(this->target_url,this->target_port,this->active_camera);
+    
 }
 
 

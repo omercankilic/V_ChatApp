@@ -8,6 +8,11 @@
 
 namespace Chat{
     
+    void Tcp_Socket::send_video_connection_request()
+    {
+        this->send_message("",this->act_clients->active_client_ip_addr,CONNECTION_VIDEO_START);
+    }
+    
     Tcp_Socket::Tcp_Socket(std::string username, std::string ip_addr,Active_Clients *act_c){
         this->user_name = username;
         ip_assigned = new char[16];
@@ -15,8 +20,8 @@ namespace Chat{
         create_socket();
         act_clients = act_c;
         tcp_listen_th = new std::thread( [this](){ socket_listen();});
-        set_discover_ip_list();
-        send_discover_msg();
+        //set_discover_ip_list();
+        //send_discover_msg();
     }
     
     int Tcp_Socket::create_socket(){
@@ -71,31 +76,12 @@ namespace Chat{
                     if(is_connected == false){
 
                         emit connectionStart((QString)temp_message_packet->packet_raw_data, client_ip);
-                        //is_accepted_f(temp_message_packet->packet_raw_data,temp_client_addr);
-                        //close(temp_client_sockfd);
-                        //if( ACCEPTED== is_accepted_f(temp_message_packet->packet_raw_data,temp_client_addr)){
-                        //
-                        //    close(temp_client_sockfd);
-                        //    send_message(ip_assigned, client_ip, CONNECTION_ACCEPT);
-                        //    is_connected = true;
-                        //
-                        //    act_clients->active_client_sockfd = temp_client_sockfd;
-                        //    act_clients->active_client_addr = temp_client_addr;
-                        //    std::string temp_name(temp_message_packet->packet_raw_data);
-                        //    act_clients->active_client_host_name = temp_name;
-                        //                            
-                        //}else{
-                        //    send_message(ip_assigned, client_ip, CONNECTION_REFUSED);
-                        //    close(temp_client_sockfd);
-                        //}
                     }else{
                         send_message(this->user_name, client_ip, CONNECTION_REFUSED);
-                        //send_message(ip_assigned, client_ip, CONNECTION_REFUSED);
-                        //close(temp_client_sockfd);
+                       
                     }
                     close(temp_client_sockfd);
                     temp_message_packet = nullptr;
-                    //delete temp_message_packet;
                 }else if(res == CONNECTION_STOP){
     
                     if( this->act_clients->active_client_ip_addr == std::string(client_ip)){
@@ -113,25 +99,25 @@ namespace Chat{
                     }
                     close(temp_client_sockfd);
                     
-                }else if (res == CONNECTION_ONLINE){
+                }/*else if (res == CONNECTION_ONLINE){
     
                     std::cout<<(uint16_t)(temp_message_packet->packet_type)<<std::endl;
                     active_client new_client;
                     new_client.first = temp_message_packet->packet_raw_data;
                     new_client.second= client_ip;
                     act_clients->online_clients.push_back(new_client);
-                    emit new_msg_online((QString)temp_message_packet->packet_raw_data);
+                   // emit new_msg_online((QString)temp_message_packet->packet_raw_data);
                     char usr[30];
                     strcpy(usr, user_name.c_str());
                     send_message(usr, client_ip, CONNECTION_RESPOND);
-                    close(temp_client_sockfd);  
-                }else if (res == (uint8_t)CONNECTION_RESPOND){
+                    close(temp_client_sockfd);*/  
+                else if (res == (uint8_t)CONNECTION_RESPOND){
                     std::cout<<(uint16_t)(temp_message_packet->packet_type)<<std::endl;
                     active_client new_client;
                     new_client.first = temp_message_packet->packet_raw_data;
                     new_client.second= client_ip;
                     act_clients->online_clients.push_back(new_client);
-                    emit new_msg_online((QString)temp_message_packet->packet_raw_data);
+                    emit new_msg_online_tcp((QString)temp_message_packet->packet_raw_data);
                     close(temp_client_sockfd);
     
                 }else if(res == (uint8_t)CONNECTION_ACCEPT){
@@ -226,7 +212,7 @@ namespace Chat{
                     char *packet = reinterpret_cast<char*>(temp_packet);
                     send(temp_sock,packet,3007,0);
                     delete temp_packet;
-//                    send_message(this->user_name, discover_ip_list.at(i), CONNECTION_ONLINE);
+//                  send_message(this->user_name, discover_ip_list.at(i), CONNECTION_ONLINE);
                 }
             }
 
@@ -314,32 +300,7 @@ namespace Chat{
 
     }
     
-    //void Tcp_Socket::is_accepted_f(char *host_name, struct sockaddr_in &client){
-    //
-    //    char client_ip[16];
-    //
-    //    inet_ntop(AF_INET,&client.sin_addr,client_ip,16);
-    //
-    //
-    //  //  std::thread *t_info_thread = new std::thread([&](){
-    //        QString que = QString::fromStdString(std::string(host_name)) + " wants to talk to you ? (Yes/No)?";
-    //        //if (QMessageBox::Yes == QMessageBox(QMessageBox::Information, "title", que, QMessageBox::Yes|QMessageBox::No).exec())
-    //        //{
-    //            this->act_clients->active_client_ip_addr = std::string(client_ip);
-    //            this->act_clients->active_client_host_name = std::string(host_name);
-    //            this->is_connected = true;
-    //            send_message(this->user_name,std::string(client_ip),CONNECTION_ACCEPT);
-    //        ///}else{
-    //        ///    send_message(this->user_name,std::string(client_ip),CONNECTION_REFUSED);
-    //        ///}
-    //
-    //    //});
-    //    //t_info_thread->join();
-    //    //
-    //    //delete t_info_thread;
-    //    //return 1;
-    //}
-   
+
     
     
 }

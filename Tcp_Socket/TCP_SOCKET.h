@@ -58,18 +58,23 @@ namespace Chat {
             
             Q_OBJECT
             
+        public slots:
+            void send_video_connection_request();
             
         signals:
             void new_msg_came   (QString);//Message type == MESSAGE
-            void new_msg_online (QString);
+            void new_msg_online_tcp   (QString);//Message type == MESSAGE
+            
             void new_msg_accepted_clr();
             void connectionStart(QString, QString);
             void connectionNotification(QString);
+            void new_msg_deactive();
+            void new_msg_activate(QString,int);
             
         public:
             std::vector<std::string> message;
             Tcp_Socket(std::string username, std::string ip_addr,Active_Clients *act_c);
-            bool  is_connected = false;
+            bool  is_connected = true;
             std::string user_name;
             
             //Api Functions

@@ -21,7 +21,6 @@ namespace vc{
     {
             Q_OBJECT
         public:
-            Sender();
             Sender(string target_url,string target_port,camera_type active_cam);
             friend class VideoCall;
             
@@ -78,6 +77,8 @@ namespace vc{
             AVCodecContext *decoder_ctx;
             int set_decoder();
             int decode_and_show(AVPacket enc_pkt);
+            
+            int prepare_and_send_data(AVPacket &pkt);
             
         signals:
             void video_paused();
