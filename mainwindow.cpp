@@ -12,8 +12,8 @@ MainWindow::MainWindow(QWidget *parent,std::string ip_n,std::string user_n)
     std::cout<<"Main window constructor was called"<<std::endl;
     ip_addres = ip_n;
     user_name = user_n;
-    this->mw_udp_socket = new Udp_Socket(ip_addres, &mw_act_clients,this->user_name);
     this->mw_tcp_socket = new Tcp_Socket(user_name, ip_addres, &mw_act_clients);
+    this->mw_udp_socket = new Udp_Socket(ip_addres, &mw_act_clients,this->user_name);
     //signal slot connections
     //connect(this->mw_tcp_socket,&Tcp_Socket::new_msg_came,this,&MainWindow::msg_message_rcv);
     
@@ -175,9 +175,6 @@ void MainWindow::sendRespondMsg(QString target_ip)
 
 void MainWindow::connectionStart(QString username, QString client_ip) {
     ConnectionStartDialog *dialog = new ConnectionStartDialog(this, this->mw_tcp_socket, username, client_ip, &mw_act_clients);
-    //    Qt::WindowFlags flags = dialog->windowFlags();
-    //    dialog->setWindowFlags(flags | Qt::Tool);
-    //    dialog->setWindowModality(Qt::NonModal);
     dialog->show();
 }
 void MainWindow::connectionNotification(QString notification) {

@@ -74,7 +74,7 @@ namespace Chat {
         public:
             std::vector<std::string> message;
             Tcp_Socket(std::string username, std::string ip_addr,Active_Clients *act_c);
-            bool  is_connected = true;
+            bool  is_connected = false;
             std::string user_name;
             
             //Api Functions

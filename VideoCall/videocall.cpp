@@ -460,52 +460,50 @@ void VideoCall::packet_listen() {
         inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, 16);
         
         
-        //data_paket *packet;
-        //packet = reinterpret_cast<data_paket*>(tempdata);
-        //uint8_t tdata[packet->packet_size];
-        //memcpy(tdata,packet->data,packet->packet_size);
-        //AVPacket temp;
-        //av_packet_from_data(&temp,tdata,packet->packet_size);
-        //cout<<"packet size in listen : "<<packet->packet_size<<endl;
-        ////cout<<"AAA"<<endl;
-        ////decode_and_show(temp);
-        //
-        //int ret2 = 0;
-        //ret2 = avcodec_send_packet(decoder_ctx,&temp);
-        //if(ret2== AVERROR(EAGAIN)||ret2 == AVERROR_EOF){
-        //    show_error(ret2);
-        //    continue;
-        //}else if(ret2<0){
-        //    show_error(ret2);
-        //    cout<<"ERROR IN DECODING ENCODED PACKET"<<endl;
-        //    continue;
-        //}
-        //if(ret2>=0){
-        //    
-        //    AVFrame *decoded_frame;
-        //    decoded_frame = av_frame_alloc();
-        //    
-        //    while(true){
-        //        if(avcodec_receive_frame(decoder_ctx,decoded_frame) != 0){
-        //            av_frame_free(&decoded_frame);
-        //            break;
-        //        }else{
-        //            
-        //            cv::Mat temp_m;
-        //            avframeToMat(decoded_frame,temp_m);
-        //            //cv::cvtColor(temp_m, temp_m, cv::COLOR_BGR2RGB);
-        //            //this->ui->image_lbl->setPixmap(QPixmap::fromImage(QImage(temp_m.data, temp_m.cols, temp_m.rows, temp_m.step, QImage::Format_RGB888)));
-        //            
-        //            cv::imshow("decoded frame",temp_m);
-        //            //cv::waitKey(1);
-        //            av_frame_free(&decoded_frame);
-        //            break;
-        //        }
-        //    }
-        //    
-        //}
-        //
-        //
-        //packet = nullptr;
+        data_paket *packet;
+        packet = reinterpret_cast<data_paket*>(tempdata);
+        uint8_t tdata[packet->packet_size];
+        memcpy(tdata,packet->data,packet->packet_size);
+        AVPacket temp;
+        av_packet_from_data(&temp,tdata,packet->packet_size);
+        cout<<"packet size in listen : "<<packet->packet_size<<endl;
+        //cout<<"AAA"<<endl;
+        //decode_and_show(temp);
+        
+        int ret2 = 0;
+        ret2 = avcodec_send_packet(decoder_ctx,&temp);
+        if(ret2== AVERROR(EAGAIN)||ret2 == AVERROR_EOF){
+            show_error(ret2);
+            continue;
+        }else if(ret2<0){
+            show_error(ret2);
+            cout<<"ERROR IN DECODING ENCODED PACKET"<<endl;
+            continue;
+        }
+        if(ret2>=0){
+            
+            AVFrame *decoded_frame;
+            decoded_frame = av_frame_alloc();
+            
+            while(true){
+                if(avcodec_receive_frame(decoder_ctx,decoded_frame) != 0){
+                    av_frame_free(&decoded_frame);
+                    av_frame_unref(decoded_frame);
+                    break;
+                }else{
+                    cv::Mat img;
+                    avframeToMat(decoded_frame,img);
+                    cv::cvtColor(img, img, cv::COLOR_BGR2RGB);
+                    QImage qimg((uchar *)img.data, img.cols, img.rows, img.step, QImage::Format_RGB888);
+                    QPixmap pxmap = QPixmap::fromImage(qimg);
+                    ui->image_lbl->setPixmap(pxmap);
+                    ui->image_lbl->repaint();
+                    av_frame_free(&decoded_frame);
+                    av_frame_unref(decoded_frame);
+                    break;
+                }
+            }   
+        }
+        packet = nullptr;
     }
 }
