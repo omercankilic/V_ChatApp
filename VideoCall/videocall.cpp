@@ -46,6 +46,7 @@ int VideoCall::video_start()
 
 void VideoCall::on_startVideo_clicked()
 {
+    
     if(true == is_connected){
         this->pkt_listen_th = new std::thread([this](){packet_listen();});
         this->in_format_ctx_set();
@@ -397,12 +398,7 @@ int VideoCall::prepare_and_send_data(AVPacket &pkt)
 {
     data_paket raw_data;
     raw_data.packet_size = pkt.size;
-    //uint8_t raw_data[pkt.size];
     memcpy(raw_data.data,pkt.data,pkt.size);
-    //AVPacket temp;
-    //av_packet_from_data(&temp,raw_data,pkt.size);
-    //decode_and_show(temp);
-    
     int size = sizeof(raw_data)/sizeof(uint8_t);
     cout<<"raw size : "<<size<<endl;
     int sockfd;
