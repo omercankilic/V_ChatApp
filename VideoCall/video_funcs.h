@@ -4,6 +4,7 @@
 #include <opencv4/opencv2/core.hpp>
 #include <opencv4/opencv2/videoio.hpp>
 #include <opencv4/opencv2/highgui.hpp>
+#include "opencv2/imgproc/imgproc.hpp"
 #include <iomanip>
 namespace vc{
     void avframeToMat(const AVFrame * frame, cv::Mat& image);

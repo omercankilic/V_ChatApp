@@ -20,8 +20,6 @@ namespace Chat{
         create_socket();
         act_clients = act_c;
         tcp_listen_th = new std::thread( [this](){ socket_listen();});
-        //set_discover_ip_list();
-        //send_discover_msg();
     }
     
     int Tcp_Socket::create_socket(){

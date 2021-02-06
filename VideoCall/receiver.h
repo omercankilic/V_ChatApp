@@ -11,7 +11,7 @@ namespace vc{
         public:
             
             friend class VideoCall;
-        protected:
+        
             
             
             

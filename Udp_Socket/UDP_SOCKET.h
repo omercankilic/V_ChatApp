@@ -35,8 +35,6 @@ namespace Chat{
                     int send_respond_msg(char target_ip[]);
 
 
-                private:
-
                     int port_number = 23000;
                     char *ip_assigned = nullptr;
                     Active_Clients *act_clients;

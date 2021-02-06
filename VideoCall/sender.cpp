@@ -1,14 +1,8 @@
 #include "sender.h"
 #include "video_funcs.h"
-vc::Sender::Sender()
-{
-    
-    
-    udp_sck = new Udp_Socket("192.168.1.6",NULL);
-}
-
 vc::Sender::Sender(string target_url, string target_port,camera_type active_c):target_url(target_url),target_port(target_port),active_cam(active_c)
 {
+    
 }
 
 int vc::Sender::in_format_ctx_set()
@@ -17,7 +11,7 @@ int vc::Sender::in_format_ctx_set()
     avdevice_register_all();
     
     s_format_ctx = avformat_alloc_context();
-    if (avformat_open_input(&s_format_ctx, "/dev/video0",NULL, NULL) < 0) {
+    if (avformat_open_input(&s_format_ctx, active_cam.second.c_str(),NULL, NULL) < 0) {
         cout<<"FORMAT CONTEXT OLUSTURULAMADI"<<endl;
         return FORMAT_CONTEXT_OLUSTURULAMADI;
     }

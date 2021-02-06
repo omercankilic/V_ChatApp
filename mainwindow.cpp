@@ -15,18 +15,18 @@ MainWindow::MainWindow(QWidget *parent,std::string ip_n,std::string user_n)
     this->mw_udp_socket = new Udp_Socket(ip_addres, &mw_act_clients,this->user_name);
     this->mw_tcp_socket = new Tcp_Socket(user_name, ip_addres, &mw_act_clients);
     //signal slot connections
-    connect(this->mw_tcp_socket,&Tcp_Socket::new_msg_came,this,&MainWindow::msg_message_rcv);
+    //connect(this->mw_tcp_socket,&Tcp_Socket::new_msg_came,this,&MainWindow::msg_message_rcv);
     
-    connect(this->mw_udp_socket,&Udp_Socket::new_msg_online,this,&MainWindow::msg_message_onl);
-    connect(this->mw_tcp_socket,&Tcp_Socket::new_msg_online_tcp,this,&MainWindow::msg_message_onl);
-    connect(this->mw_udp_socket,&Udp_Socket::udp_respond_signal,this,&MainWindow::sendRespondMsg);
+    //connect(this->mw_tcp_socket,&Tcp_Socket::new_msg_online_tcp,this,&MainWindow::msg_message_onl);
+    //connect(this->mw_udp_socket,&Udp_Socket::new_msg_online,this,&MainWindow::msg_message_onl);
+    //connect(this->mw_udp_socket,&Udp_Socket::udp_respond_signal,this,&MainWindow::sendRespondMsg);
     
-    connect(this->mw_tcp_socket,&Tcp_Socket::new_msg_accepted_clr,this,&MainWindow::msg_box_clr);
-    connect(this->mw_tcp_socket,&Tcp_Socket::connectionStart,this,&MainWindow::connectionStart);
-    connect(this->mw_tcp_socket,&Tcp_Socket::connectionNotification,this,&MainWindow::connectionNotification);
-    connect(this->mw_tcp_socket,&Tcp_Socket::new_msg_deactive,this->mw_video_call,&VideoCall::deactivated);
-    connect(this->mw_tcp_socket,&Tcp_Socket::new_msg_activate,this->mw_video_call,&VideoCall::activated);
-    connect(this->mw_video_call,&VideoCall::vc_start,this->mw_tcp_socket,&Tcp_Socket::send_video_connection_request);
+    //connect(this->mw_tcp_socket,&Tcp_Socket::new_msg_accepted_clr,this,&MainWindow::msg_box_clr);
+    //connect(this->mw_tcp_socket,&Tcp_Socket::connectionStart,this,&MainWindow::connectionStart);
+    //connect(this->mw_tcp_socket,&Tcp_Socket::connectionNotification,this,&MainWindow::connectionNotification);
+    //connect(this->mw_tcp_socket,&Tcp_Socket::new_msg_deactive,this->mw_video_call,&VideoCall::deactivated);
+    //connect(this->mw_tcp_socket,&Tcp_Socket::new_msg_activate,this->mw_video_call,&VideoCall::activated);
+    //connect(this->mw_video_call,&VideoCall::vc_start,this->mw_tcp_socket,&Tcp_Socket::send_video_connection_request);
     ui->setupUi(this);
     
 }
@@ -189,5 +189,6 @@ void MainWindow::on_videoButton_clicked()
 {
     QWidget *wid = nullptr;
     mw_video_call = new VideoCall(wid,mw_act_clients.active_client_ip_addr,23000,this->mw_udp_socket);
+    mw_video_call->show();
     
 }

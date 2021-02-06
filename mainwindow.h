@@ -22,7 +22,7 @@ class MainWindow : public QMainWindow
         Q_OBJECT
         
     public:
-        MainWindow(QWidget *parent = nullptr,std::string ip_n="192.168.1.6",std::string user_n="melih");
+        MainWindow(QWidget *parent = nullptr,std::string ip_n="192.168.1.7",std::string user_n="melih");
         ~MainWindow();
         Active_Clients  mw_act_clients;
         Tcp_Socket     *mw_tcp_socket;

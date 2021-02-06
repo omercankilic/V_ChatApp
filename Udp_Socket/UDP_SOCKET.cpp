@@ -11,54 +11,14 @@ namespace Chat {
         //here we have to determine broadcast ip address 
         //We have to add 255 to current ip_assigned
         
-        udp_listen_broadcast_th = new::thread([this](){broadcast_listen();});
-        udp_listen_th = new std::thread([this](){ packet_listen();});
-        send_discover_msg();
+        udp_listen_broadcast_th = new std::thread([this](){broadcast_listen();});
+        //udp_listen_th           = new std::thread([this](){ packet_listen();});
+        //send_discover_msg();
     }
-    
-    //This socket is for video packets
-    void Udp_Socket::packet_listen() {
-        struct sockaddr_in server_addr, client_addr;
-        int server_sockfd;
-        int ret;
-        server_sockfd = socket(AF_INET,SOCK_DGRAM,0);
-        int yes = 1;
-        //if(ret !=0){
-        //    cout<<"Broadcast setsockopt error"<<endl;
-        //    return ;
-        //}
-        if(server_sockfd <0)
-        {
-            std::cout << "UDP socket creating error." << std::endl;
-        }
-        memset(&server_addr, 0, sizeof(server_addr));
-        memset(&client_addr, 0, sizeof(client_addr));
+ 
+    void Udp_Socket::send_message(std::string ip, uint8_t pkt[20000]) {
         
-        server_addr.sin_family = AF_INET;
-        server_addr.sin_addr.s_addr = inet_addr((const char*) ip_assigned);
-        server_addr.sin_port = htons(port_number);
-        
-        if( 0 > bind(server_sockfd,(struct sockaddr *)&server_addr,sizeof(server_addr)))
-        {
-            std::cout << "UDP socket binding error." << std::endl;
-        }
-        uint8_t tempdata[100];
-        int received_size;
-        socklen_t len = sizeof(client_addr);
-        
-        while (true) {
-            // recv(server_sockfd, tempdata, 30, 0);
-            received_size = recvfrom(server_sockfd, tempdata, 100, 0, (struct sockaddr *)&client_addr, &len);
-            char client_ip[16];
-            inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, 16);
-            cout<<"client ip : "<<client_ip<<endl;
-            cout<<"tempdata : "<<tempdata<<endl; 
-            
-        }
-    }
-    
-    void Udp_Socket::send_message(std::string ip, uint8_t pkt[]) {
-        
+        cout<<"size pkt : "<<sizeof(pkt)/sizeof(uint8_t)<<endl;
         int sockfd;
         struct sockaddr_in servaddr;
         
@@ -68,10 +28,11 @@ namespace Chat {
         
         servaddr.sin_family = AF_INET;
         servaddr.sin_port = htons(port_number);
+        servaddr.sin_addr.s_addr = inet_addr((const char*)"192.168.1.7");
         
-        if(inet_pton(AF_INET, ip.c_str(), &servaddr.sin_addr)<=0){
-            std::cout << "Can not inet_pton." << std::endl;
-        }
+       // if(inet_pton(AF_INET, ip.c_str(), &servaddr.sin_addr)<=0){
+       //     std::cout << "Can not inet_pton." << std::endl;
+       // }
         
         uint64_t pkt_size = sizeof(pkt)/sizeof(uint8_t);
         sendto(sockfd, pkt, pkt_size, 0, (const struct sockaddr *) &servaddr, sizeof(servaddr));
@@ -86,7 +47,7 @@ namespace Chat {
         int ret;
         server_sockfd = socket(AF_INET,SOCK_DGRAM,0);
         int yes = 1;
-        ret = setsockopt(server_sockfd,SOL_SOCKET,SO_BROADCAST,(char*)&yes,sizeof(int));
+        //ret = setsockopt(server_sockfd,SOL_SOCKET,SO_BROADCAST,(char*)&yes,sizeof(int));
 
         if(server_sockfd <0)
         {
@@ -108,7 +69,6 @@ namespace Chat {
         socklen_t len = sizeof(client_addr);
         
         while (true) {
-            // recv(server_sockfd, tempdata, 30, 0);
             received_size = recvfrom(server_sockfd, tempdata, 3007, 0, (struct sockaddr *)&client_addr, &len);
             char client_ip[15];
             inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, 15);
@@ -116,13 +76,15 @@ namespace Chat {
             cout<<"tempdata : "<<tempdata<<endl; 
             MessagePacket *temp_message_pkt;
             temp_message_pkt = reinterpret_cast<MessagePacket*>(tempdata);
+            cout<<temp_message_pkt->packet_raw_data<<endl;
             if(temp_message_pkt->packet_type ==CONNECTION_ONLINE){
                 active_client new_client;
                 new_client.first = temp_message_pkt->packet_raw_data;
                 new_client.second= client_ip;
                 act_clients->online_clients.push_back(new_client);
-                emit new_msg_online((QString)temp_message_pkt->packet_raw_data);
-                emit udp_respond_signal((QString::fromStdString((string(client_ip)))));
+                
+                //emit new_msg_online((QString)temp_message_pkt->packet_raw_data);
+                //emit udp_respond_signal((QString::fromStdString((string(client_ip)))));
                 //send_respond_msg(client_ip);
                 close(server_sockfd);  
             }
@@ -161,6 +123,7 @@ namespace Chat {
             sendto(sock,packet,3007,0,(struct sockaddr*) &broadcast_addr,addr_len);
         }
         cout<<"udp broadcast discover send "<<endl;
+        close(sock);
         return 0;
         
     }
