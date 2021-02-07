@@ -90,7 +90,7 @@ border-radius:5px;
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="fileButton">
+           <widget class="QPushButton" name="Refresh">
             <property name="minimumSize">
              <size>
               <width>70</width>
@@ -104,7 +104,7 @@ border-radius:5px;
              </size>
             </property>
             <property name="text">
-             <string>File</string>
+             <string>Refresh</string>
             </property>
            </widget>
           </item>

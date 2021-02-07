@@ -215,3 +215,9 @@ void MainWindow::on_videoButton_clicked()
 {
     mw_video_call->show();
 }
+
+void MainWindow::on_Refresh_clicked()
+{
+    ui->activeClientsList->clear();
+    mw_udp_socket->send_discover_msg();
+}

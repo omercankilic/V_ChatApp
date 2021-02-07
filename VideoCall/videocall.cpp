@@ -261,20 +261,6 @@ int VideoCall::output_format_ctx_set(std::string url){
 }
 
 
-void VideoCall::on_pauseVideo_clicked()
-{
-    {
-        if(video_call_connected == true){
-            unique_lock<std::mutex> lock(cv_pause_mut);
-            if(is_paused == false){
-                is_paused = true;
-            }else{
-                is_paused = false;
-                cv_pause.notify_all();
-            }
-        }
-    }
-}
 
 int VideoCall::start_sending()
 {   

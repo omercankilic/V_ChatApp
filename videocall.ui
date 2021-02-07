@@ -31,27 +31,6 @@
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="pauseVideo">
-      <property name="text">
-       <string>Pause</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="continueVideo">
-      <property name="text">
-       <string>Continue</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="recordVideo">
-      <property name="text">
-       <string>Record</string>
-      </property>
-     </widget>
-    </item>
-    <item>
      <widget class="QPushButton" name="stopVideo">
       <property name="text">
        <string>Stop</string>

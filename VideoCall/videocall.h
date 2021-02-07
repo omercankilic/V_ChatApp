@@ -109,7 +109,6 @@ class VideoCall : public QWidget
         void video_call_start_stop   (bool close_or_open);
     private slots:
         void on_stopVideo_clicked();
-        void on_pauseVideo_clicked();
 };
 
 #endif // VIDEOCALL_H

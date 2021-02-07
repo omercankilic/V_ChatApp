@@ -56,7 +56,9 @@ class MainWindow : public QMainWindow
         
         void on_videoButton_clicked();
         
-    private:
+        void on_Refresh_clicked();
+
+private:
         Ui::MainWindow *ui;
         std::string ip_addres;
         std::string user_name;
