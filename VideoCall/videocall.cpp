@@ -96,9 +96,7 @@ void VideoCall::on_stopVideo_clicked()
         if(pkt_listen_th != nullptr){
             unique_lock<std::mutex> lock(video_call_mutex);
             video_call_connected = false;
-            pkt_listen_th->join();
-            delete pkt_listen_th;
-            pkt_listen_th = nullptr;
+
         }
         emit video_call_request_signal(CONNECTION_VIDEO_STOP);
     }else{
@@ -109,11 +107,13 @@ void VideoCall::on_stopVideo_clicked()
 
 void VideoCall::video_call_start()
 {
-    this->in_format_ctx_set();
+    if(s_format_ctx == nullptr) {
+        this->in_format_ctx_set();
+    }
     this->set_encoder();
     this->set_decoder();
     this->pkt_listen_th = new std::thread([this](){packet_listen();});
-    this->start_sending();
+    this->start_sending_th = new std::thread([this](){start_sending();});
 }
 
 void VideoCall::video_call_accept_reject(bool accept_reject)

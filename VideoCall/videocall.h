@@ -29,6 +29,7 @@ class VideoCall : public QWidget
         void packet_listen();
         Tcp_Socket *vc_tcp_sock    = nullptr;
         std::thread *pkt_listen_th = nullptr;
+        std::thread *start_sending_th = nullptr;
         mutex       video_call_mutex;
         
         //Camera selection
@@ -42,7 +43,7 @@ class VideoCall : public QWidget
         //FFmpeg parameters
         AVCodec *s_codec;
         AVCodecContext  *s_codec_ctx;
-        AVFormatContext *s_format_ctx;
+        AVFormatContext *s_format_ctx = nullptr;
         
         //Output format variables
         AVCodec *out_codec;
