@@ -1,40 +1,64 @@
 #include "videocall.h"
 #include "ui_videocall.h"
 #include "video_funcs.h"
-VideoCall::VideoCall(QWidget *parent,string tar_url,int target_prt,Udp_Socket *mw_udp_sock) :
+#include "connectionnotificationdialog.h"
+#include "connectionstartdialog.h"
+VideoCall::VideoCall(QWidget *parent,string tar_url,int target_prt,Tcp_Socket *mw_tcp_sock) :
     QWidget(parent),
     ui(new Ui::VideoCall),target_url(tar_url),target_port(target_prt)
 {
-    this->vc_udp_sock = mw_udp_sock;
-    detect_cameras();
-    active_camera.second="/dev/video0";
+    
+    //this->setAttribute(Qt::WA_DeleteOnClose);
+    this->vc_tcp_sock = mw_tcp_sock;
     ui->setupUi(this);
     //TODO new ui will be shown here and asked to select camera
 }
 
 VideoCall::~VideoCall()
 {
+
+    if(video_call_connected == true){
+        unique_lock<std::mutex> lock(video_call_mutex);
+        video_call_connected = false;
+        cv_pause.notify_all();
+        pkt_listen_th->join();
+        delete pkt_listen_th;
+        pkt_listen_th = nullptr;
+    }
     delete ui;
 }
 
 int VideoCall::detect_cameras()
 {
-    QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
-    for (const QCameraInfo &cameraInfo : cameras){
-        camera_type c_type;
-        c_type.first = cameraInfo.description().toStdString();
-        c_type.second= cameraInfo.deviceName().toStdString();
-        
-        available_cameras.push_back(c_type);
-        cout<<"c_type.first : "<<c_type.first<< " c_type.second : "<<c_type.second<<endl;
-    }
-    return cameras.size();
+  //  QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
+  //  for (const QCameraInfo &cameraInfo : cameras){
+  //      camera_type c_type;
+  //      c_type.first = cameraInfo.description().toStdString();
+  //      c_type.second= cameraInfo.deviceName().toStdString();
+  //      
+  //      available_cameras.push_back(c_type);
+  //      
+  //      cout<<"c_type.first : "<<c_type.first<< " c_type.second : "<<c_type.second<<endl;
+  //  }
+  //  
+  //  return cameras.size();
+    return 0;
 }
 
 int VideoCall::video_stop()
 {
     //kill video format and delete all allocate memory
     //No need to send stopping vc message
+    if(pkt_listen_th != nullptr){
+        if(video_call_connected == true){
+            unique_lock<std::mutex> lock(video_call_mutex);
+            video_call_connected = false;
+            pkt_listen_th->join();
+            delete pkt_listen_th;
+            pkt_listen_th = nullptr;
+        }
+    }
+    
 }
 
 int VideoCall::video_start()
@@ -46,44 +70,93 @@ int VideoCall::video_start()
 
 void VideoCall::on_startVideo_clicked()
 {
-    
-    if(true == is_connected){
-        this->pkt_listen_th = new std::thread([this](){packet_listen();});
-        this->in_format_ctx_set();
-        this->set_encoder();
-        this->set_decoder();
-        this->start_sending();
-        
-        
-    }else{
-        QMessageBox msg_bx;
-        msg_bx.setText("You are not connected to any client.\nSo we can not start a video call.");
-        int ret= msg_bx.exec();
-    }
-}
-
-void VideoCall::deactivated()
-{
-    if(true  == this->is_connected){
-        this->is_connected = false;
-        this->video_stop();
-    }
-}
-
-void VideoCall::activated(QString trg_url,int trg_prt)
-{
-    //if(is_connected == false){
-    this->target_url = trg_url.toStdString();
-    this->target_port= trg_prt;
-    is_connected = true;
-    //}else{
-    //    this->video_stop();
-    //    this->video_start();
+    //QWidget *wg;
+    //this->cm_sel =  new cam_select_form(wg);
+    //
+    //if( 0 == cm_sel->detect_cameras()){
+    //     connectionNotificationDialog *cnd = new connectionNotificationDialog(this,"No cam connected to your computer.");
+    //    return;
     //}
+    //    
+    //cm_sel->show();
+    active_camera.second = "/dev/video0";
+    if(active_camera.second == "NOCAMCONNECTED"){
+        connectionNotificationDialog *cnd = new connectionNotificationDialog(this,"No cam connected to your computer.");
+        cnd->show();
+        return;
+    }
+    if(true == this->vc_tcp_sock->is_connected){
+        if(false == video_call_connected){
+            emit video_call_request_signal(CONNECTION_VIDEO_START);
+        }else{
+            connectionNotificationDialog *cnd = new connectionNotificationDialog(this,"You are making a video call, so you can not start a new video call right now.");
+            cnd->show();
+        }
+    }else{
+        connectionNotificationDialog *cnd = new connectionNotificationDialog(this,"You are not making video call right now.");
+        cnd->show();
+    }
 }
 
+void VideoCall::on_stopVideo_clicked()
+{   
+    if(true == video_call_connected){
+        if(pkt_listen_th != nullptr){
+            unique_lock<std::mutex> lock(video_call_mutex);
+            video_call_connected = false;
+            pkt_listen_th->join();
+            delete pkt_listen_th;
+            pkt_listen_th = nullptr;
+        }
+        emit video_call_request_signal(CONNECTION_VIDEO_STOP);
+    }else{
+        connectionNotificationDialog *cnd = new connectionNotificationDialog(this,"You are not making video call right now.");
+        cnd->show();
+    }     
+}
 
-///SENDER DUZELTMELERI
+void VideoCall::video_call_start()
+{
+    this->in_format_ctx_set();
+    this->set_encoder();
+    this->set_decoder();
+    this->pkt_listen_th = new std::thread([this](){packet_listen();});
+    this->start_sending();    
+}
+
+void VideoCall::video_call_accept_reject(bool accept_reject)
+{
+    if(accept_reject == true){
+        connectionNotificationDialog *cnd = new connectionNotificationDialog(this,"Video call request accepted.");
+        cnd->show();
+        video_call_connected = true;
+        video_call_start();
+    }else{
+        
+        video_call_connected = false;
+        connectionNotificationDialog *cnd = new connectionNotificationDialog(this,"Video call request rejected.");
+        cnd->show();
+    }
+}
+
+void VideoCall::video_call_start_stop(bool close_or_open)
+{
+    if(true == close_or_open){
+        QWidget *qw;
+        ConnectionStartDialog *dialog = new ConnectionStartDialog(qw,vc_tcp_sock,true);
+        dialog->show();
+    }else{
+        {
+            unique_lock<std::mutex> lock(video_call_mutex);
+            video_call_connected = false;
+            //TODO stop sending video to connected client//
+        }
+        QWidget wg;
+        connectionNotificationDialog video_stp(&wg,"Video call stopped");
+        video_stp.show();
+    }
+    
+}
 
 int VideoCall::in_format_ctx_set()
 {
@@ -196,16 +269,31 @@ int VideoCall::output_format_ctx_set(std::string url){
     
 }
 
+
+void VideoCall::on_pauseVideo_clicked()
+{
+    {
+        if(video_call_connected == true){
+            unique_lock<std::mutex> lock(cv_pause_mut);
+            if(is_paused == false){
+                is_paused = true;
+            }else{
+                is_paused = false;
+                cv_pause.notify_all();
+            }
+        }
+    }
+}
+
 int VideoCall::start_sending()
 {   
-    
     avformat_network_init();
     int ret;
-    while(false == exit_flag){
+    while(true == video_call_connected){
         if( is_paused == true){
             unique_lock<mutex> lck(cv_pause_mut);
             cv_pause.wait(lck);
-            if(exit_flag==true){
+            if(video_call_connected==false){
                 break;
             }
         }
@@ -227,11 +315,8 @@ int VideoCall::start_sending()
                         av_frame_free(&temp_frame);
                         break;
                     }else{
-                        //encode_and_send(temp_frame);
                         start_encoding(temp_frame);
                     }
-                    //av_frame_free(&temp_frame);
-                    
                 }
             }
             
@@ -273,7 +358,7 @@ int VideoCall::start_encoding(AVFrame *frame)
         }
         
         prepare_and_send_data(enc_pkt);
-    
+        
     }
     return 0;
 }
@@ -412,7 +497,7 @@ int VideoCall::prepare_and_send_data(AVPacket &pkt)
     
     servaddr.sin_family = AF_INET;
     servaddr.sin_port = htons(23000);
-    servaddr.sin_addr.s_addr = inet_addr((const char*)"192.168.1.7");
+    servaddr.sin_addr.s_addr = inet_addr((const char*)target_url.c_str());
     
     //if(inet_pton(AF_INET, ip.c_str(), &servaddr.sin_addr)<=0){
     //    std::cout << "Can not inet_pton." << std::endl;
@@ -438,7 +523,7 @@ void VideoCall::packet_listen() {
     memset(&client_addr, 0, sizeof(client_addr));
     
     server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = inet_addr((const char*)"192.168.1.7");
+    server_addr.sin_addr.s_addr = inet_addr((const char*)target_url.c_str());
     server_addr.sin_port = htons(target_port);
     
     if( 0 > bind(server_sockfd,(struct sockaddr *)&server_addr,sizeof(server_addr)))
@@ -448,7 +533,7 @@ void VideoCall::packet_listen() {
     int received_size;
     socklen_t len = sizeof(client_addr);
     
-    while (true) {
+    while (video_call_connected) {
         // recv(server_sockfd, tempdata, 30, 0);
         uint8_t tempdata[30004];
         received_size = recvfrom(server_sockfd, tempdata, 30004, 0, (struct sockaddr *)&client_addr, &len);
@@ -460,14 +545,14 @@ void VideoCall::packet_listen() {
         packet = reinterpret_cast<data_paket*>(tempdata);
         uint8_t tdata[packet->packet_size];
         memcpy(tdata,packet->data,packet->packet_size);
-        AVPacket temp;
-        av_packet_from_data(&temp,tdata,packet->packet_size);
+        AVPacket *temp;
+        av_packet_from_data(temp,tdata,packet->packet_size);
         cout<<"packet size in listen : "<<packet->packet_size<<endl;
         //cout<<"AAA"<<endl;
         //decode_and_show(temp);
         
         int ret2 = 0;
-        ret2 = avcodec_send_packet(decoder_ctx,&temp);
+        ret2 = avcodec_send_packet(decoder_ctx,temp);
         if(ret2== AVERROR(EAGAIN)||ret2 == AVERROR_EOF){
             show_error(ret2);
             continue;
@@ -500,6 +585,9 @@ void VideoCall::packet_listen() {
                 }
             }   
         }
+        
+        av_packet_free(&temp);
+        delete[] tdata;
         packet = nullptr;
     }
 }

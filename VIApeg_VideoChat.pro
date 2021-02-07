@@ -23,6 +23,7 @@ SOURCES += \
     VideoCall/video_funcs.cpp \
     VideoCall/videocall.cpp \
     VideoCall/videomessagepacket.cpp \
+    cam_select_form.cpp \
     camera_capture.cpp \
     connectionnotificationdialog.cpp \
     connectionstartdialog.cpp \
@@ -42,6 +43,7 @@ HEADERS += \
     VideoCall/video_funcs.h \
     VideoCall/videocall.h \
     VideoCall/videomessagepacket.h \
+    cam_select_form.h \
     camera_capture.h \
     connectionnotificationdialog.h \
     connectionstartdialog.h \
@@ -50,6 +52,7 @@ HEADERS += \
     openwindow.h 
 
 FORMS += \
+    cam_select_form.ui \
     connectionnotificationdialog.ui \
     connectionstartdialog.ui \
     mainwindow.ui \

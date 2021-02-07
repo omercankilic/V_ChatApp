@@ -17,6 +17,9 @@ class ConnectionStartDialog : public QDialog
 
 public:
     ConnectionStartDialog(QWidget *parent = nullptr, Tcp_Socket *tcp = nullptr, QString username ="", QString client_ip = "", Active_Clients *act_client = nullptr);
+    
+    ConnectionStartDialog(QWidget *parent, Tcp_Socket *tcp,bool is_video);
+    
     ~ConnectionStartDialog();
 
 private slots:
@@ -30,6 +33,7 @@ private:
     Active_Clients *act_client;
     std::string client_ip;
     std::string username;
+    bool is_video_dialog = false;
 };
 
 #endif // CONNECTIONSTARTDIALOG_H

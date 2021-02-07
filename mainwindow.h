@@ -22,19 +22,22 @@ class MainWindow : public QMainWindow
         Q_OBJECT
         
     public:
-        MainWindow(QWidget *parent = nullptr,std::string ip_n="192.168.1.7",std::string user_n="melih");
+        MainWindow(QWidget *parent = nullptr,std::string ip_n="",std::string user_n="");
         ~MainWindow();
         Active_Clients  mw_act_clients;
-        Tcp_Socket     *mw_tcp_socket;
-        Udp_Socket     *mw_udp_socket;
-        VideoCall      *mw_video_call;
+        Tcp_Socket     *mw_tcp_socket = nullptr;
+        Udp_Socket     *mw_udp_socket = nullptr;
+        VideoCall      *mw_video_call = nullptr;
+        
         
     private slots:
         
+        void mw_vc_create();
         void on_sendMsgButton_clicked();
         void on_activeClientsList_itemDoubleClicked(QListWidgetItem *item);
         void msg_message_onl(QString);
         void msg_message_rcv(QString);
+        
         void connectionStart(QString, QString);
         void connectionNotification(QString);
         

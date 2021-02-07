@@ -9,7 +9,7 @@
 #include "video_funcs.h"
 using namespace cv;
 namespace vc{
-    void avframeToMat(const AVFrame * frame, Mat& image)
+    void avframeToMat(const AVFrame *frame, Mat& image)
     {
         
         int width = frame->width;

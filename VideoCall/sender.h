@@ -6,6 +6,7 @@
 #include <iostream>
 #include "videomessagepacket.h"
 #include "Udp_Socket/UDP_SOCKET.h"
+#include "Tcp_Socket/TCP_SOCKET.h"
 
 using namespace std;
 using namespace Chat;
