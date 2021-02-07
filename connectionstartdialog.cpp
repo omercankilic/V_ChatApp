@@ -36,8 +36,8 @@ void ConnectionStartDialog::on_pushButton_2_clicked()
        
         is_video_dialog = false;
         this->tcp->is_connected = true;
-        this->tcp->send_message(this->tcp->user_name,this->client_ip,CONNECTION_VIDEO_ACCEPTED);
         emit this->tcp->new_msg_video_call_response(true);
+        this->tcp->send_message(this->tcp->user_name,this->client_ip,CONNECTION_VIDEO_ACCEPTED);
         this->close();
     }else{
         act_client->active_client_ip_addr = client_ip;
