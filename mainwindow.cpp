@@ -14,6 +14,9 @@ MainWindow::MainWindow(QWidget *parent,std::string ip_n,std::string user_n)
     user_name = user_n;
     this->mw_tcp_socket = new Tcp_Socket(user_name, ip_addres, &mw_act_clients);
     this->mw_udp_socket = new Udp_Socket(ip_addres, &mw_act_clients,this->user_name);
+    
+    connect(this->mw_udp_socket,&Udp_Socket::new_msg_online,this,&MainWindow::msg_message_onl);
+    connect(this->mw_udp_socket,&Udp_Socket::udp_respond_signal,this,&MainWindow::sendRespondMsg);
     this->mw_vc_create();
     //signal slot connections
     connect(this->mw_tcp_socket,&Tcp_Socket::new_msg_came,this,&MainWindow::msg_message_rcv);
