@@ -63,7 +63,7 @@ namespace vc{
         sws_freeContext(scaler_ctx);
         scaler_ctx = nullptr;
         assert(ret);
-        free(dataBuffer);
+        //free(dataBuffer);
         return target_frame;
     }
     

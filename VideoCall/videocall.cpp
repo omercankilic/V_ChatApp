@@ -71,23 +71,23 @@ int VideoCall::video_start()
 void VideoCall::on_startVideo_clicked()
 {
     active_camera.second = "/dev/video0";
-    video_call_start();
-    //if(active_camera.second == "NOCAMCONNECTED"){
-    //    connectionNotificationDialog *cnd = new connectionNotificationDialog(this,"No cam connected to your computer.");
-    //    cnd->show();
-    //    return;
-    //}
-    //if(true == this->vc_tcp_sock->is_connected){
-    //    if(false == video_call_connected){
-    //        emit video_call_request_signal(CONNECTION_VIDEO_START);
-    //    }else{
-    //        connectionNotificationDialog *cnd = new connectionNotificationDialog(this,"You are making a video call, so you can not start a new video call right now.");
-    //        cnd->show();
-    //    }
-    //}else{
-    //    connectionNotificationDialog *cnd = new connectionNotificationDialog(this,"You are not making video call right now.");
-    //    cnd->show();
-    //}
+    //video_call_start();
+    if(active_camera.second == "NOCAMCONNECTED"){
+        connectionNotificationDialog *cnd = new connectionNotificationDialog(this,"No cam connected to your computer.");
+        cnd->show();
+        return;
+    }
+    if(true == this->vc_tcp_sock->is_connected){
+        if(false == video_call_connected){
+            emit video_call_request_signal(CONNECTION_VIDEO_START);
+        }else{
+            connectionNotificationDialog *cnd = new connectionNotificationDialog(this,"You are making a video call, so you can not start a new video call right now.");
+            cnd->show();
+        }
+    }else{
+        connectionNotificationDialog *cnd = new connectionNotificationDialog(this,"You are not making video call right now.");
+        cnd->show();
+    }
 }
 
 void VideoCall::on_stopVideo_clicked()
@@ -113,7 +113,7 @@ void VideoCall::video_call_start()
     this->set_encoder();
     this->set_decoder();
     this->pkt_listen_th = new std::thread([this](){packet_listen();});
-    this->start_sending();    
+    this->start_sending();
 }
 
 void VideoCall::video_call_accept_reject(bool accept_reject)
@@ -280,7 +280,7 @@ int VideoCall::start_sending()
 {   
     avformat_network_init();
     int ret;
-    while(true /*== video_call_connected*/){
+    while(true == video_call_connected){
         if( is_paused == true){
             unique_lock<mutex> lck(cv_pause_mut);
             cv_pause.wait(lck);
@@ -468,7 +468,7 @@ int VideoCall::decode_and_show(AVPacket enc_pkt)
 //size = 20004
 struct data_paket{
         int     packet_size;
-        uint8_t data[30000];
+        uint8_t data[60000];
 };
 
 int VideoCall::prepare_and_send_data(AVPacket &pkt)
@@ -480,26 +480,27 @@ int VideoCall::prepare_and_send_data(AVPacket &pkt)
     cout<<"raw size : "<<size<<endl;
     int sockfd;
     struct sockaddr_in servaddr;
-    
+
     if ( (sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0 ) {
         std::cout << "UDP socket creating error(sending message)." << std::endl;
     }
-    
+
     setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,0,sizeof(int));
-    
+
     servaddr.sin_family = AF_INET;
     servaddr.sin_port = htons(23000);
-    servaddr.sin_addr.s_addr = inet_addr((const char*)"192.168.1.7"/*target_url.c_str()*/);
-    
+    servaddr.sin_addr.s_addr = inet_addr((const char*)vc_tcp_sock->act_clients->active_client_ip_addr.c_str());
+
     //if(inet_pton(AF_INET, ip.c_str(), &servaddr.sin_addr)<=0){
     //    std::cout << "Can not inet_pton." << std::endl;
     //}
     uint8_t *raw_data_pkt;
     cout<<"raw data pkt size: "<<raw_data.packet_size<<endl;
     raw_data_pkt = reinterpret_cast<uint8_t*>(&raw_data);
-    sendto(sockfd, raw_data_pkt,30004, 0, (const struct sockaddr *) &servaddr, sizeof(servaddr));
+    sendto(sockfd, raw_data_pkt,60004, 0, (const struct sockaddr *) &servaddr, sizeof(servaddr));
     ::close(sockfd);
-    raw_data_pkt = nullptr;    
+    raw_data_pkt = nullptr;
+
 }
 
 void VideoCall::packet_listen() {
@@ -515,9 +516,8 @@ void VideoCall::packet_listen() {
     memset(&server_addr, 0, sizeof(server_addr));
     memset(&client_addr, 0, sizeof(client_addr));
     
-    string u_rl = "192.168.1.7";
     server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = inet_addr((const char*)u_rl.c_str());
+    server_addr.sin_addr.s_addr = inet_addr((const char*)vc_tcp_sock->ip_assigned);
     server_addr.sin_port = htons(23000);
     
     if( 0 > bind(server_sockfd,(struct sockaddr *)&server_addr,sizeof(server_addr)))
@@ -529,8 +529,8 @@ void VideoCall::packet_listen() {
     
     while (true) {
         // recv(server_sockfd, tempdata, 30, 0);
-        uint8_t tempdata[30004];
-        received_size = recvfrom(server_sockfd, tempdata, 30004, 0, (struct sockaddr *)&client_addr, &len);
+        uint8_t tempdata[60004];
+        received_size = recvfrom(server_sockfd, tempdata, 60004, 0, (struct sockaddr *)&client_addr, &len);
         char client_ip[16];
         inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, 16);
         
@@ -576,7 +576,6 @@ void VideoCall::packet_listen() {
                     QImage qimg((uchar *)img.data, img.cols, img.rows, img.step, QImage::Format_RGB888);
                     QPixmap pxmap = QPixmap::fromImage(qimg);
                     ui->image_lbl->setPixmap(pxmap);
-                    ui->image_lbl->repaint();
                     av_frame_free(&decoded_frame);
                     av_frame_unref(decoded_frame);
                     break;

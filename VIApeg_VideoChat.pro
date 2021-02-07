@@ -65,7 +65,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 
-INCLUDEPATH  += /usr/include/opencv4
+INCLUDEPATH  += /usr/local/include/opencv4
 INCLUDEPATH += /home/mrcan/ffmpeg_build/include
 LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_objdetect -lopencv_imgcodecs -lopencv_videoio
 
