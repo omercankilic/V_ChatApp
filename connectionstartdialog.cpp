@@ -14,7 +14,9 @@ ConnectionStartDialog::ConnectionStartDialog(QWidget *parent, Tcp_Socket *tcp, Q
     this->act_client = act_client;
 }
 
-ConnectionStartDialog::ConnectionStartDialog(QWidget *parent, Tcp_Socket *tcp,bool is_video)
+ConnectionStartDialog::ConnectionStartDialog(QWidget *parent, Tcp_Socket *tcp,bool is_video):
+    QDialog(parent),
+    ui(new Ui::ConnectionStartDialog)
 {   
     ui->setupUi(this);
     ui->label->setText(QString::fromStdString(this->username) + "wants to make video call. Do you accept?");
@@ -36,8 +38,8 @@ void ConnectionStartDialog::on_pushButton_2_clicked()
        
         is_video_dialog = false;
         this->tcp->is_connected = true;
-        emit this->tcp->new_msg_video_call_response(true);
         this->tcp->send_message(this->tcp->user_name,this->client_ip,CONNECTION_VIDEO_ACCEPTED);
+        emit this->tcp->new_msg_video_call_response(true);
         this->close();
     }else{
         act_client->active_client_ip_addr = client_ip;

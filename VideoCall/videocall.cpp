@@ -127,23 +127,22 @@ void VideoCall::video_call_start()
 void VideoCall::video_call_accept_reject(bool accept_reject)
 {
     if(accept_reject == true){
-        connectionNotificationDialog *cnd = new connectionNotificationDialog(this,"Video call request accepted.");
-        cnd->show();
+//        connectionNotificationDialog *cnd = new connectionNotificationDialog(this,"Video call request accepted.");
+//        cnd->show();
         video_call_connected = true;
         video_call_start();
     }else{
         
         video_call_connected = false;
-        connectionNotificationDialog *cnd = new connectionNotificationDialog(this,"Video call request rejected.");
-        cnd->show();
+//        connectionNotificationDialog *cnd = new connectionNotificationDialog(this,"Video call request rejected.");
+//        cnd->show();
     }
 }
 
 void VideoCall::video_call_start_stop(bool close_or_open)
 {
     if(true == close_or_open){
-        QWidget *qw;
-        ConnectionStartDialog *dialog = new ConnectionStartDialog(qw,vc_tcp_sock,true);
+        ConnectionStartDialog *dialog = new ConnectionStartDialog(this,vc_tcp_sock,true);
         dialog->show();
     }else{
         {

@@ -12,9 +12,10 @@ MainWindow::MainWindow(QWidget *parent,std::string ip_n,std::string user_n)
     std::cout<<"Main window constructor was called"<<std::endl;
     ip_addres = ip_n;
     user_name = user_n;
-    this->mw_vc_create();
+
     this->mw_tcp_socket = new Tcp_Socket(user_name, ip_addres, &mw_act_clients);
     this->mw_udp_socket = new Udp_Socket(ip_addres, &mw_act_clients,this->user_name);
+    this->mw_vc_create();
     
     connect(this->mw_udp_socket,&Udp_Socket::new_msg_online,this,&MainWindow::msg_message_onl);
     connect(this->mw_udp_socket,&Udp_Socket::udp_respond_signal,this,&MainWindow::sendRespondMsg);

@@ -128,6 +128,7 @@ namespace Chat{
                     close(temp_client_sockfd);
                     
                 }else if(res == (uint8_t)CONNECTION_VIDEO_START){
+                    std::cout << "buradaaaa" << std::endl;
                     emit this->new_msg_video_call_request(true);
                 }else if(res == (uint8_t)CONNECTION_VIDEO_STOP){
                     emit this->new_msg_video_call_request(false);
