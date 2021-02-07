@@ -62,6 +62,14 @@ namespace Chat {
                     return CONNECTION_ACCEPT;
                 }else if(packet_type == CONNECTION_RESPOND){
                     return CONNECTION_RESPOND;
+                }else if(packet_type == CONNECTION_VIDEO_ACCEPTED){
+                    return CONNECTION_VIDEO_ACCEPTED;
+                }else if(packet_type == CONNECTION_VIDEO_REFUSED){
+                    return CONNECTION_VIDEO_REFUSED;
+                }else if(packet_type == CONNECTION_VIDEO_START){
+                    return CONNECTION_VIDEO_START;
+                }else if(packet_type == CONNECTION_VIDEO_STOP){
+                    return CONNECTION_VIDEO_STOP;
                 }
                 
                 
