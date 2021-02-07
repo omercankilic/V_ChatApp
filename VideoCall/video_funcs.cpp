@@ -35,7 +35,7 @@ namespace vc{
         
         int number_of_bytes=av_image_get_buffer_size(enc_ctx->pix_fmt,enc_ctx->width,enc_ctx->height,1); 
         assert(number_of_bytes);
-        uint8_t *dataBuffer = (uint8_t*) av_malloc (number_of_bytes*sizeof(uint8_t));
+        uint8_t *dataBuffer = new uint8_t[number_of_bytes*sizeof(uint8_t)];// (uint8_t*) av_malloc (number_of_bytes*sizeof(uint8_t));
         
         //target_frame->data[0]=dataBuffer;
         
@@ -59,8 +59,11 @@ namespace vc{
                     0,
                     0
                     );
-       ret = sws_scale(scaler_ctx,(const uint8_t *const *)in_frame->data,in_frame->linesize,0,enc_ctx->height,target_frame->data,target_frame->linesize);
+        ret = sws_scale(scaler_ctx,(const uint8_t *const *)in_frame->data,in_frame->linesize,0,enc_ctx->height,target_frame->data,target_frame->linesize);
+        sws_freeContext(scaler_ctx);
+        scaler_ctx = nullptr;
         assert(ret);
+        free(dataBuffer);
         return target_frame;
     }
     
