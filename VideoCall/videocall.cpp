@@ -7,7 +7,7 @@ VideoCall::VideoCall(QWidget *parent,string tar_url,int target_prt,Tcp_Socket *m
     QWidget(parent),
     ui(new Ui::VideoCall),target_url(tar_url),target_port(target_prt)
 {
-    
+    active_camera.second = "/dev/video0";
     //this->setAttribute(Qt::WA_DeleteOnClose);
     this->vc_tcp_sock = mw_tcp_sock;
     ui->setupUi(this);
@@ -70,7 +70,7 @@ int VideoCall::video_start()
 
 void VideoCall::on_startVideo_clicked()
 {
-    active_camera.second = "/dev/video0";
+
     //video_call_start();
     if(active_camera.second == "NOCAMCONNECTED"){
         connectionNotificationDialog *cnd = new connectionNotificationDialog(this,"No cam connected to your computer.");
@@ -151,6 +151,7 @@ void VideoCall::video_call_start_stop(bool close_or_open)
 
 int VideoCall::in_format_ctx_set()
 {
+    //AVInputFormat *inputFormat =av_find_input_format("v4l2");
     //starts all devices in computer
     avdevice_register_all();
     

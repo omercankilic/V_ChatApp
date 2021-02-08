@@ -182,7 +182,7 @@ namespace Chat{
     
     void Tcp_Socket::send_video_message(uint8_t vc_msg_type)
     {
-        this->send_message("",this->act_clients->active_client_ip_addr,vc_msg_type);
+        this->send_message(this->user_name,this->act_clients->active_client_ip_addr,vc_msg_type);
     }
     
     int Tcp_Socket::send_connection_request(std::string host_ip){

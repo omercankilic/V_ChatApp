@@ -19,7 +19,7 @@ ConnectionStartDialog::ConnectionStartDialog(QWidget *parent, Tcp_Socket *tcp,bo
     ui(new Ui::ConnectionStartDialog)
 {   
     ui->setupUi(this);
-    ui->label->setText(QString::fromStdString(this->username) + "wants to make video call. Do you accept?");
+    ui->label->setText(QString::fromStdString(tcp->act_clients->active_client_host_name) + " wants to make video call. Do you accept?");
     is_video_dialog = true;
     this->tcp = tcp;
     this->client_ip = this->tcp->act_clients->active_client_ip_addr;
