@@ -58,13 +58,14 @@ int VideoCall::video_stop()
             pkt_listen_th = nullptr;
         }
     }
-    
+    return 0;
 }
 
 int VideoCall::video_start()
 {
     //Create sender and receiver for video 
     //vc_sender = new Sender(this->target_url,this->target_port,this->active_camera);
+    return 0;
 }
 
 
@@ -413,7 +414,7 @@ int VideoCall::set_decoder()
         cout<<"decoder acma hatasi"<<endl;
         return -3;
     }
-    
+    return 0;
 }
 
 int VideoCall::decode_and_show(AVPacket enc_pkt)
@@ -487,7 +488,7 @@ int VideoCall::prepare_and_send_data(AVPacket &pkt)
     sendto(sockfd, raw_data_pkt,60004, 0, (const struct sockaddr *) &servaddr, sizeof(servaddr));
     ::close(sockfd);
     raw_data_pkt = nullptr;
-
+    return 0;
 }
 
 void VideoCall::packet_listen() {

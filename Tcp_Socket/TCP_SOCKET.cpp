@@ -45,7 +45,7 @@ namespace Chat{
         {
             return SOCKET_BINDING_ERROR;
         }
-        
+        return 0;
     }
     
     int Tcp_Socket::socket_listen(){
@@ -147,6 +147,7 @@ namespace Chat{
             
         }
         close(server_sockfd);
+        return 0;
     }
     
     
