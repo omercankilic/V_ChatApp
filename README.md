@@ -4,7 +4,7 @@
 ### C++ 11 and above
 ### OpenCv
    Opencv can be installed via command below:
-      $ sudo apt install libopencv-dev python3-opencv
+   $ sudo apt install libopencv-dev python3-opencv
 ### QMake version 3.1, Using Qt version 5.12.8
    Way 1)
    To download Qt you can check this https://www.qt.io/download-open-source website and click Download the Qt-Online Installer
