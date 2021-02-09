@@ -1,4 +1,0 @@
-# Playing video with ffplay
-# setting flag values
-
-ffplay -fflags nobuffer -flags low_delay
